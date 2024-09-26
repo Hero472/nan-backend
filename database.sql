@@ -76,3 +76,13 @@ CREATE TABLE attendance (
     date DATE NOT NULL,
     status BOOLEAN NOT NULL
 );
+
+-- Table to the classes of the week
+CREATE TABLE schedule (
+    id_schedule SERIAL PRIMARY KEY,
+    level LevelEnum NOT NULL,
+    id_subject INT REFERENCES Subject(id_subject),
+    day DayEnum NOT NULL,
+    block BlockEnum NOT NULL,
+    UNIQUE (level, day, block) -- Ensures no overlapping schedules for the same level
+);

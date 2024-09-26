@@ -1,1 +1,14 @@
-export class CreateParentDto {}
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+
+export class CreateParentDto {
+    @IsNotEmpty()
+    @IsString()
+    name: string;
+
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+
+    @IsNotEmpty()
+    password: string;
+}
