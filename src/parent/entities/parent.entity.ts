@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Student } from 'src/student/entities/student.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('parent')
 export class Parent {
@@ -15,6 +16,12 @@ export class Parent {
   password: Buffer;
 
   @Column({ type: 'text', nullable: true })
+  recovery_code: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  recovery_code_expires_at: Date;
+
+  @Column({ type: 'text', nullable: true })
   access_token: string;
 
   @Column({ type: 'text', nullable: true })
@@ -25,4 +32,8 @@ export class Parent {
 
   @Column({ type: 'timestamptz', nullable: true })
   refresh_token_expires_at: Date;
+
+  @OneToMany(() => Student, (student) => student.parent)
+  students: Student[];
+
 }

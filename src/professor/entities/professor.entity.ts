@@ -15,6 +15,12 @@ export class Professor {
   password: Buffer;
 
   @Column({ type: 'text', nullable: true })
+  recovery_code: string;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  recovery_code_expires_at: Date;
+
+  @Column({ type: 'text', nullable: true })
   access_token: string;
 
   @Column({ type: 'text', nullable: true })

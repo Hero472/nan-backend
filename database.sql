@@ -1,7 +1,6 @@
 CREATE TYPE LevelEnum AS ENUM ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'); 
 CREATE TYPE DayEnum AS ENUM ('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'); 
 CREATE TYPE BlockEnum AS ENUM ('A', 'B', 'C', 'D', 'E');
-CREATE TYPE StatusEnum AS ENUM ()
 
 -- Parent table
 CREATE TABLE parent (
@@ -9,6 +8,8 @@ CREATE TABLE parent (
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE CHECK (email ~* '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'),
     password BYTEA NOT NULL,
+    recovery_code TEXT,
+    recovery_code_expires_at TIMESTAMPTZ,
     access_token TEXT,
     refresh_token TEXT,
     access_token_expires_at TIMESTAMPTZ,
@@ -23,6 +24,8 @@ CREATE TABLE student (
     level LevelEnum,
     email TEXT NOT NULL UNIQUE CHECK (email ~* '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'),
     password BYTEA NOT NULL,
+    recovery_code TEXT,
+    recovery_code_expires_at TIMESTAMPTZ,
     access_token TEXT,
     refresh_token TEXT,
     access_token_expires_at TIMESTAMPTZ,
@@ -35,6 +38,8 @@ CREATE TABLE professor (
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE CHECK (email ~* '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'),
     password BYTEA NOT NULL,
+    recovery_code TEXT,
+    recovery_code_expires_at TIMESTAMPTZ,
     access_token TEXT,
     refresh_token TEXT,
     access_token_expires_at TIMESTAMPTZ,

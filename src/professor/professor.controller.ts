@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { CreateProfessorDto } from './dto/create-professor.dto';
-import { UpdateProfessorDto } from './dto/update-professor.dto';
 
 @Controller('professor')
 export class ProfessorController {
@@ -22,13 +21,25 @@ export class ProfessorController {
     return this.professorService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfessorDto: UpdateProfessorDto) {
-    return this.professorService.update(+id, updateProfessorDto);
+  @Patch('initial-password-recovery:email')
+  initialPasswordRecovery(@Param('email') email: string) {
+    return this.professorService.initiatePasswordRecovery(email);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.professorService.remove(+id);
+  @Patch('verify-password-recovery/:email')
+  verifyPasswordRecovery(
+    @Param('email') email: string,
+    @Body('code') code: string,
+  ) {
+    return this.professorService.verifyRecoveryCode(email, code);
+  }
+
+  @Patch('reset-password-recovery/:email')
+  resetPassword(
+    @Param('email') email: string,
+    @Body('code') code: string,
+    @Body('newPassword') newPassword: string
+  ) {
+    return this.professorService.resetPassword(email, code, newPassword);
   }
 }

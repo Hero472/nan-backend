@@ -6,7 +6,7 @@ export class MailService {
   private transporter;
 
   constructor() {
-    // Initialize Nodemailer transporter with SMTP settings (using Gmail as an example)
+    // Initialize Nodemailer transporter with SMTP settings (using outlook as an example)
     this.transporter = nodemailer.createTransport({
       service: 'outlook', // Can be 'smtp.ethereal.email', 'outlook', etc.
       auth: {
@@ -32,4 +32,12 @@ export class MailService {
       console.error('Error sending email:', error);
     }
   }
+
+  async sendRecoveryEmail(to: string, recoveryCode: string) {
+    const subject = 'Password Recovery';
+    const text = `Your recovery code is: ${recoveryCode}`;
+    const html = `<p>Your recovery code is: <b>${recoveryCode}</b></p>`;
+    await this.sendMail(to, subject, text, html);
+  }
+
 }

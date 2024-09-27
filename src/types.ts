@@ -3,10 +3,10 @@ export type UserSend = {
   name: string;
   access_token: string;
   refresh_token: string;
-  user_type: string;
+  user_type: UserType;
 };
 
-enum UserType {
+export enum UserType {
   Admin = 4,
   Professor = 3,
   Parent = 2,

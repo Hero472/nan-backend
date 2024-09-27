@@ -15,6 +15,14 @@ import { Professor } from './professor/entities/professor.entity';
 import { Student } from './student/entities/student.entity';
 import { Parent } from './parent/entities/parent.entity';
 import { MailModule } from './mail/mail.module';
+import baseConfig from './config/env/base-config';
+import configValidation from './config/env/config-validation';
+import { ProfessorController } from './professor/professor.controller';
+import { StudentController } from './student/student.controller';
+import { SubjectController } from './subject/subject.controller';
+import { ParentController } from './parent/parent.controller';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,25 +33,50 @@ import { MailModule } from './mail/mail.module';
     GradeModule,
     MedicalInfoModule,
     AttendanceModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      load: [baseConfig],
+      validationSchema: configValidation,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('TYPEORM_HOST'),
-        port: configService.get<number>('TYPEORM_PORT'),
-        password: configService.get<string>('TYPEORM_PASSWORD'),
-        username: configService.get<string>('TYPEORM_USERNAME'),
-        entities: [Professor, Student, Subject, Parent],
-        database: configService.get<string>('TYPEORM_DATABASE'),
-        synchronize: configService.get<boolean>('TYPEORM_SYNCHRONIZE'),
-        logging: configService.get<boolean>('TYPEORM_LOGGING'),
-        ssl: false,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const host = configService.get<string>('TYPEORM_HOST');
+        const port = configService.get<number>('TYPEORM_PORT');
+        const password = configService.get<string>('TYPEORM_PASSWORD');
+        const username = configService.get<string>('TYPEORM_USERNAME');
+        const database = configService.get<string>('TYPEORM_DATABASE');
+        const synchronize = configService.get<boolean>('TYPEORM_SYNCHRONIZE');
+        const logging = configService.get<boolean>('TYPEORM_LOGGING');
+
+        console.log('Database host:', host);
+        console.log('Database port:', port);
+        console.log('Database username:', username);
+        console.log('Database password:', password ? '***hidden***' : 'No password provided');
+        console.log('Database name:', database);
+        console.log('Synchronize:', synchronize);
+        console.log('Logging:', logging);
+
+        return {
+          type: 'postgres',
+          host,
+          port,
+          password,
+          username,
+          database,
+          entities: [Professor, Student, Subject, Parent],
+          synchronize,
+          logging,
+          ssl: false,
+        };
+      },
     }),
     MailModule,
+    AuthModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController],
   providers: [AppService],
 })
 export class AppModule {}

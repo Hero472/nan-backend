@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { ParentService } from './parent.service';
 import { CreateParentDto } from './dto/create-parent.dto';
-import { UpdateParentDto } from './dto/update-parent.dto';
 
 @Controller('parent')
 export class ParentController {
@@ -22,13 +21,25 @@ export class ParentController {
     return this.parentService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateParentDto: UpdateParentDto) {
-    return this.parentService.update(+id, updateParentDto);
+  @Patch('initial-password-recovery:email')
+  initialPasswordRecovery(@Param('email') email: string) {
+    return this.parentService.initiatePasswordRecovery(email);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.parentService.remove(+id);
+  @Patch('verify-password-recovery/:email')
+  verifyPasswordRecovery(
+    @Param('email') email: string,
+    @Body('code') code: string,
+  ) {
+    return this.parentService.verifyRecoveryCode(email, code);
+  }
+
+  @Patch('reset-password-recovery/:email')
+  resetPassword(
+    @Param('email') email: string,
+    @Body('code') code: string,
+    @Body('newPassword') newPassword: string
+  ) {
+    return this.parentService.resetPassword(email, code, newPassword);
   }
 }
