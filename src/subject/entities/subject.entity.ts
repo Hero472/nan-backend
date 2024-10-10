@@ -5,20 +5,20 @@ import { LevelEnum, DayEnum, BlockEnum } from '../../enum';
 @Entity('subject')
 export class Subject {
   @PrimaryGeneratedColumn()
-  id_subject: number;
+  id_subject!: number;
 
   @ManyToOne(() => Professor)
-  id_professor: Professor;
+  id_professor!: Professor;
 
   @Column({ type: 'text' })
-  name: string;
+  name!: string;
 
   @Column({ type: 'enum', enum: LevelEnum })
-  level: LevelEnum;
+  level!: LevelEnum;
 
   @Column({ type: 'enum', enum: DayEnum })
-  day: DayEnum;
+  day!: DayEnum;
 
   @Column({ type: 'enum', enum: BlockEnum })
-  block: BlockEnum;
+  block!: BlockEnum;
 }

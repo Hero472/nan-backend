@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateProfessorDto } from './dto/create-professor.dto';
 import { Professor } from './entities/professor.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,18 +12,20 @@ import { Repository } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { UserSend, UserType } from 'src/types';
 import * as bcrypt from 'bcrypt';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateProfessorDto } from './dto/update-professor.dto';
 
 @Injectable()
 export class ProfessorService {
+  jwtService: any;
   constructor(
     @InjectRepository(Professor)
     private readonly professorRepository: Repository<Professor>,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
-  async create(createProfessorDto: CreateProfessorDto) : Promise<UserSend> {
-
-    const {name, email, password } = createProfessorDto;
+  async create(createProfessorDto: CreateProfessorDto): Promise<UserSend> {
+    const { name, email, password } = createProfessorDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -25,21 +33,21 @@ export class ProfessorService {
       name,
       email,
       password: Buffer.from(hashedPassword),
-    })
+    });
 
     try {
       const result = await this.professorRepository.save(professor);
 
       return {
-        id_user: result.id_professor,
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
-        user_type: UserType.Professor
+        user_type: UserType.Professor,
       };
-
     } catch (error: unknown) {
-      throw new InternalServerErrorException('An error occurred while saving the professor');
+      throw new InternalServerErrorException(
+        'An error occurred while saving the professor',
+      );
     }
   }
 
@@ -47,15 +55,25 @@ export class ProfessorService {
     return this.professorRepository.find();
   }
 
-  async findOne(id: number): Promise<Professor> {
+  async findOne(access_token: string): Promise<UserSend> {
     try {
-      const professor = await this.professorRepository.findOne({where: { id_professor: id }});
+      const decodedToken = this.jwtService.verify(access_token);
+      const professorId = decodedToken.sub;
+      const professorEmail = decodedToken.email;
+      const professor = await this.professorRepository.findOne({
+        where: { id_professor: professorId },
+      });
 
       if (!professor) {
-        throw new NotFoundException(`professor with ID ${id} not found`);
+        throw new NotFoundException(`professor with email ${professorEmail} not found`);
       }
 
-      return professor;
+      return {
+        name: professor.name,
+        access_token: professor.access_token,
+        refresh_token: professor.refresh_token,
+        user_type: UserType.Professor,
+      };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -68,7 +86,9 @@ export class ProfessorService {
   }
 
   async initiatePasswordRecovery(email: string) {
-    const professor = await this.professorRepository.findOne({ where: { email } });
+    const professor = await this.professorRepository.findOne({
+      where: { email },
+    });
 
     if (!professor) {
       throw new NotFoundException('professor not found');
@@ -89,9 +109,11 @@ export class ProfessorService {
   }
 
   async verifyRecoveryCode(email: string, code: string) {
-    const professor = await this.professorRepository.findOne({ where: { email, recovery_code: code } });
+    const professor = await this.professorRepository.findOne({
+      where: { email, recovery_code: code },
+    });
 
-    if (!professor || professor.recovery_code_expires_at < new Date()) {
+    if (!professor ||!professor.recovery_code_expires_at || professor.recovery_code_expires_at < new Date()) {
       throw new BadRequestException('Invalid or expired recovery code');
     }
 
@@ -99,19 +121,101 @@ export class ProfessorService {
   }
 
   async resetPassword(email: string, code: string, newPassword: string) {
-    const professor = await this.professorRepository.findOne({ where: { email, recovery_code: code } });
+    const professor = await this.professorRepository.findOne({
+      where: { email, recovery_code: code },
+    });
 
-    if (!professor || professor.recovery_code_expires_at < new Date()) {
+    if (!professor || !professor.recovery_code_expires_at || professor.recovery_code_expires_at < new Date()) {
       throw new BadRequestException('Invalid or expired recovery code');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     professor.password = Buffer.from(hashedPassword);
-    professor.recovery_code = null; // Clear recovery code after successful reset
+    professor.recovery_code = null;
     professor.recovery_code_expires_at = null;
 
     await this.professorRepository.save(professor);
 
     return { message: 'Password reset successfully' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  async update(
+    access_token: string,
+    updateProfessorDto: UpdateProfessorDto,
+  ): Promise<UserSend> {
+    try {
+      const decodedToken = this.jwtService.verify(access_token);
+      const professorId = decodedToken.sub;
+
+      const professor = await this.professorRepository.findOne({
+        where: { id_professor: professorId },
+      });
+
+      if (!professor) {
+        throw new NotFoundException(`professor with ID ${professorId} not found`);
+      }
+
+      const { name, email, password } = updateProfessorDto;
+
+      if (name) {
+        professor.name = name;
+      }
+
+      if (email) {
+        professor.email = email;
+      }
+
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        professor.password = Buffer.from(hashedPassword);
+      }
+
+      const result = await this.professorRepository.save(professor);
+
+      return {
+        name: result.name,
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
+        user_type: UserType.Professor
+      };
+    } catch (error: unknown) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'An error occurred while updating the professor',
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  async remove(token: string): Promise<UserSend> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      const professorId = decodedToken.sub;
+      const professorEmail = decodedToken.email;
+      const professor: Professor | null = await this.professorRepository.findOne({ where: { id_professor: professorId } });
+
+      if (!professor) {
+        throw new NotFoundException(`professor with email ${professorEmail} not found`);
+      }
+
+      await this.professorRepository.remove(professor);
+
+      return {
+        name: professor.name,
+        access_token: professor.access_token,
+        refresh_token: professor.refresh_token,
+        user_type: UserType.Student
+      };
+    } catch (error: unknown) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException;
+      }
+
+      throw new InternalServerErrorException('An error occurred while removing the professor');
+    }
   }
 }

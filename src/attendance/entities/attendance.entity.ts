@@ -5,17 +5,17 @@ import { Subject } from '../../subject/entities/subject.entity';
 @Entity('attendance')
 export class Attendance {
   @PrimaryGeneratedColumn()
-  id_attendance: number;
+  id_attendance!: number;
 
   @ManyToOne(() => Student)
-  id_student: Student;
+  id_student!: Student;
 
   @ManyToOne(() => Subject)
-  id_subject: Subject;
+  id_subject!: Subject;
 
   @Column({ type: 'date' })
-  date: string;
+  date!: string;
 
   @Column({ type: 'boolean' })
-  status: boolean;
+  status!: boolean;
 }

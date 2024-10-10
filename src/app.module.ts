@@ -26,6 +26,7 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     ParentModule,
     StudentModule,
     ProfessorModule,
@@ -43,13 +44,13 @@ import { AuthModule } from './auth/auth.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const host = configService.get<string>('TYPEORM_HOST');
-        const port = configService.get<number>('TYPEORM_PORT');
-        const password = configService.get<string>('TYPEORM_PASSWORD');
-        const username = configService.get<string>('TYPEORM_USERNAME');
-        const database = configService.get<string>('TYPEORM_DATABASE');
-        const synchronize = configService.get<boolean>('TYPEORM_SYNCHRONIZE');
-        const logging = configService.get<boolean>('TYPEORM_LOGGING');
+        const host = configService.get<string>('TYPEORM_HOST') || 'localhost';
+        const port = configService.get<number>('TYPEORM_PORT') || 5432;
+        const password = configService.get<string>('TYPEORM_PASSWORD') || '123456789';
+        const username =  configService.get<string>('TYPEORM_USERNAME') || 'postgres';
+        const database = configService.get<string>('TYPEORM_DATABASE') || 'postgres';
+        const synchronize = configService.get<boolean>('TYPEORM_SYNCHRONIZE') || true;
+        const logging = configService.get<boolean>('TYPEORM_LOGGING') || true;
 
         console.log('Database host:', host);
         console.log('Database port:', port);
@@ -69,7 +70,9 @@ import { AuthModule } from './auth/auth.module';
           entities: [Professor, Student, Subject, Parent],
           synchronize,
           logging,
-          ssl: false,
+          ssl: {
+            rejectUnauthorized: false,
+          },
         };
       },
     }),

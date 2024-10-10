@@ -4,36 +4,36 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 @Entity('parent')
 export class Parent {
   @PrimaryGeneratedColumn()
-  id_parent: number;
+  id_parent!: number;
 
   @Column({ type: 'text' })
-  name: string;
+  name!: string;
 
   @Column({ type: 'text', unique: true })
-  email: string;
+  email!: string;
 
   @Column({ type: 'bytea' })
-  password: Buffer;
+  password!: Buffer;
 
   @Column({ type: 'text', nullable: true })
-  recovery_code: string;
+  recovery_code: string | null = null;
 
   @Column({ type: 'timestamptz', nullable: true })
-  recovery_code_expires_at: Date;
+  recovery_code_expires_at: Date | null = null;
 
   @Column({ type: 'text', nullable: true })
-  access_token: string;
+  access_token: string | null = null;
 
   @Column({ type: 'text', nullable: true })
-  refresh_token: string;
+  refresh_token: string | null = null;
 
   @Column({ type: 'timestamptz', nullable: true })
-  access_token_expires_at: Date;
+  access_token_expires_at: Date | null = null;
 
   @Column({ type: 'timestamptz', nullable: true })
-  refresh_token_expires_at: Date;
+  refresh_token_expires_at: Date | null = null;
 
   @OneToMany(() => Student, (student) => student.parent)
-  students: Student[];
+  students!: Student[];
 
 }

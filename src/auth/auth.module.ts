@@ -28,6 +28,6 @@ dotenv.config();
   ],
   providers: [AuthService, ParentService, SubjectService, StudentService],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

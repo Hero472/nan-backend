@@ -42,9 +42,9 @@ export class AuthService {
         where: { id_student: payload.sub },
       });
 
-      if (student && student.access_token_expires_at > new Date()) {
-        return student;
-      }
+       if (student && student.access_token_expires_at && student.access_token_expires_at > new Date()) {
+      return student;
+    }
 
       return null;
     } catch (error) {
@@ -62,7 +62,7 @@ export class AuthService {
         where: { id_student: payload.sub },
       });
 
-      if (student && student.refresh_token === refreshToken && student.refresh_token_expires_at > new Date()) {
+      if (student && student.refresh_token === refreshToken && student.refresh_token_expires_at && student.refresh_token_expires_at > new Date()) {
         return student;
       }
 
@@ -73,7 +73,7 @@ export class AuthService {
   }
 
   async validateStudent(email: string, pass: string): Promise<Student | null> {
-    const student = await this.studentRepository.findOne({ where: { email } });
+    const student = await this.studentRepository.findOne({ where: { email: email } });
 
     if (!student) {
       return null;
@@ -101,7 +101,7 @@ export class AuthService {
     const { email, password } = loginDto;
 
     try {
-      const student = await this.studentRepository.findOne({ where: { email } });
+      const student = await this.studentRepository.findOne({ where: { email: email } });
 
       if (!student) {
         throw new UnauthorizedException('Invalid email or password');
@@ -146,7 +146,7 @@ export class AuthService {
         where: { id_parent: payload.sub },
       });
 
-      if (parent && parent.access_token_expires_at > new Date()) {
+      if (parent && parent.access_token_expires_at && parent.access_token_expires_at > new Date()) {
         return parent;
       }
 
@@ -166,7 +166,7 @@ export class AuthService {
         where: { id_parent: payload.sub },
       });
 
-      if (parent && parent.refresh_token === refreshToken && parent.refresh_token_expires_at > new Date()) {
+      if (parent && parent.refresh_token === refreshToken && parent.refresh_token_expires_at && parent.refresh_token_expires_at > new Date()) {
         return parent;
       }
 
@@ -205,7 +205,7 @@ export class AuthService {
     const { email, password } = loginDto;
 
     try {
-      const parent = await this.parentRepository.findOne({ where: { email } });
+      const parent = await this.parentRepository.findOne({ where: { email: email } });
 
       if (!parent) {
         throw new UnauthorizedException('Invalid email or password');
@@ -249,7 +249,7 @@ export class AuthService {
         where: { id_professor: payload.sub },
       });
 
-      if (professor && professor.access_token_expires_at > new Date()) {
+      if (professor && professor.access_token_expires_at && professor.access_token_expires_at > new Date()) {
         return professor;
       }
 
@@ -269,7 +269,7 @@ export class AuthService {
         where: { id_professor: payload.sub },
       });
 
-      if (professor && professor.refresh_token === refreshToken && professor.refresh_token_expires_at > new Date()) {
+      if (professor && professor.refresh_token === refreshToken && professor.refresh_token_expires_at && professor.refresh_token_expires_at > new Date()) {
         return professor;
       }
 
@@ -280,7 +280,7 @@ export class AuthService {
   }
 
   async validateProfessor(email: string, pass: string): Promise<Professor | null> {
-    const professor = await this.professorRepository.findOne({ where: { email } });
+    const professor = await this.professorRepository.findOne({ where: { email: email } });
 
     if (!professor) {
       return null;
@@ -308,7 +308,7 @@ export class AuthService {
     const { email, password } = loginDto;
 
     try {
-      const professor = await this.professorRepository.findOne({ where: { email } });
+      const professor = await this.professorRepository.findOne({ where: { email: email } });
 
       if (!professor) {
         throw new UnauthorizedException('Invalid email or password');

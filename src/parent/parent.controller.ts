@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ParentService } from './parent.service';
 import { CreateParentDto } from './dto/create-parent.dto';
 
@@ -41,5 +41,18 @@ export class ParentController {
     @Body('newPassword') newPassword: string
   ) {
     return this.parentService.resetPassword(email, code, newPassword);
+  }
+
+  @Patch(':access_token')
+  update(
+    @Param('access_token') access_token: string,
+    @Body() updateProfessorDto: CreateParentDto,
+  ) {
+    return this.parentService.update(access_token, updateProfessorDto);
+  }
+
+  @Delete(':access_token')
+  remove(@Param('access_token') access_token: string) {
+    return this.parentService.remove(access_token);
   }
 }

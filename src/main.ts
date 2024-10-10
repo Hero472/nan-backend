@@ -7,12 +7,14 @@ import * as dotenv from 'dotenv';
 // Cargar variables de entorno desde el archivo .env
 dotenv.config();
 
+console.log(dotenv)
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: process.env.FRONTEND_URL, // Allow requests from your frontend
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true, // Enable if cookies or authentication are involved
+    credentials: true,
   });
   const options = new DocumentBuilder()
     .setTitle('API Documentation')

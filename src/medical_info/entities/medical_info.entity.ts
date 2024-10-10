@@ -4,17 +4,17 @@ import { Student } from '../../student/entities/student.entity';
 @Entity('medical_info')
 export class MedicalInfo {
   @PrimaryGeneratedColumn()
-  id_medical_info: number;
+  id_medical_info!: number;
 
   @ManyToOne(() => Student)
-  id_student: Student;
+  id_student!: Student;
 
   @Column({ type: 'text', nullable: true })
-  medical_condition: string;
+  medical_condition: string | null = null;
 
   @Column({ type: 'text', nullable: true })
-  medications: string;
+  medications: string | null = null;
 
   @Column({ type: 'text', nullable: true })
-  allergies: string;
+  allergies: string | null = null;
 }

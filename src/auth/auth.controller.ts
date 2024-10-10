@@ -3,52 +3,51 @@ import { AuthService } from './auth.service';
 import { Student } from 'src/student/entities/student.entity';
 import { Parent } from 'src/parent/entities/parent.entity';
 import { Professor } from 'src/professor/entities/professor.entity';
+import { UserType } from 'src/types';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: { email: string; password: string; userType: 'student' | 'parent' | 'professor' }) {
+  async login(@Body() loginDto: { email: string; password: string; userType: 'student' | 'parent' | 'professor' }): Promise<{accessToken: string, refreshToken: string }> {
     const { email, password, userType } = loginDto;
     let bool: boolean;
-    let user: Student | Parent | Professor;
+    let user: Student | Parent | Professor | null = null;
 
-    // Handle login based on userType
     switch (userType) {
-      case 'student':
+      case UserType.Student:
         ({ bool, student: user } = await this.authService.loginStudent({ email, password }));
         break;
-      case 'parent':
+      case UserType.Parent:
         ({ bool, parent: user } = await this.authService.loginParent({ email, password }));
         break;
-      case 'professor':
+      case UserType.Professor:
         ({ bool, professor: user } = await this.authService.loginProfessor({ email, password }));
         break;
       default:
         throw new BadRequestException('Invalid user type');
     }
 
-    if (!bool) {
+    if (!bool || !user) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    let accessToken: string;
-    let refreshToken: string;
+    let accessToken: string = '';
+  let refreshToken: string = '';
 
-    // Generate tokens based on userType
     switch (userType) {
-      case 'student':
+      case UserType.Student:
         accessToken = await this.authService.generateAccessTokenStudent(user as Student);
         refreshToken = await this.authService.generateRefreshTokenStudent(user as Student);
         await this.authService.updateStudentTokens(user as Student, accessToken, refreshToken);
         break;
-      case 'parent':
+      case UserType.Parent:
         accessToken = await this.authService.generateAccessTokenParent(user as Parent);
         refreshToken = await this.authService.generateRefreshTokenParent(user as Parent);
         await this.authService.updateParentTokens(user as Parent, accessToken, refreshToken);
         break;
-      case 'professor':
+      case UserType.Professor:
         accessToken = await this.authService.generateAccessTokenProfessor(user as Professor);
         refreshToken = await this.authService.generateRefreshTokenProfessor(user as Professor);
         await this.authService.updateProfessorTokens(user as Professor, accessToken, refreshToken);
@@ -59,13 +58,12 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Body() body: { refreshToken: string; userType: 'student' | 'parent' | 'professor' }) {
+  async refresh(@Body() body: { refreshToken: string; userType: 'student' | 'parent' | 'professor' }): Promise<{accessToken: string, refreshToken: string }> {
     const { refreshToken, userType } = body;
     let user: Student | Parent | Professor | null;
 
-    // Verify refresh token based on userType
     switch (userType) {
-      case 'student':
+      case UserType.Student:
         user = await this.authService.verifyRefreshTokenStudent(refreshToken);
         break;
       case 'parent':
@@ -85,7 +83,6 @@ export class AuthController {
     let newAccessToken: string;
     let newRefreshToken: string;
 
-    // Generate new tokens based on userType
     switch (userType) {
       case 'student':
         newAccessToken = await this.authService.generateAccessTokenStudent(user as Student);

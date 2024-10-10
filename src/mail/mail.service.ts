@@ -3,7 +3,7 @@ import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailService {
-  private transporter;
+  private readonly transporter;
 
   constructor() {
     // Initialize Nodemailer transporter with SMTP settings (using outlook as an example)

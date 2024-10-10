@@ -6,42 +6,42 @@ import { IsNotEmpty } from 'class-validator';
 @Entity('student')
 export class Student {
   @PrimaryGeneratedColumn()
-  id_student: number;
+  id_student!: number;
 
   @IsNotEmpty()
   @Column({ type: 'text' })
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @Column({ type: 'enum', enum: LevelEnum })
-  level: LevelEnum;
+  level!: LevelEnum;
 
   @IsNotEmpty()
   @Column({ type: 'text', unique: true })
-  email: string;
+  email!: string;
 
   @IsNotEmpty()
   @Column({ type: 'bytea' })
-  password: Buffer;
+  password!: Buffer;
 
   @Column({ type: 'text', nullable: true })
-  recovery_code: string;
+  recovery_code: string | null = null;
 
   @Column({ type: 'timestamptz', nullable: true })
-  recovery_code_expires_at: Date;
+  recovery_code_expires_at: Date | null = null;
 
   @Column({ type: 'text', nullable: true })
-  access_token: string;
+  access_token: string | null = null;
 
   @Column({ type: 'text', nullable: true })
-  refresh_token: string;
+  refresh_token: string | null = null;
 
   @Column({ type: 'timestamptz', nullable: true })
-  access_token_expires_at: Date;
+  access_token_expires_at: Date | null = null;
 
   @Column({ type: 'timestamptz', nullable: true })
-  refresh_token_expires_at: Date;
+  refresh_token_expires_at: Date | null = null;
 
   @ManyToOne(() => Parent, (parent) => parent.students)
-  parent: Parent;
+  parent!: Parent;
 }

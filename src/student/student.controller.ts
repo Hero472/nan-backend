@@ -26,8 +26,8 @@ export class StudentController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.studentService.findOne(+id);
+  findOne(@Param('access_token') access_token: string) {
+    return this.studentService.findOne(access_token);
   }
 
   @Patch('initial-password-recovery:email')
@@ -47,8 +47,21 @@ export class StudentController {
   resetPassword(
     @Param('email') email: string,
     @Body('code') code: string,
-    @Body('newPassword') newPassword: string
+    @Body('newPassword') newPassword: string,
   ) {
     return this.studentService.resetPassword(email, code, newPassword);
+  }
+
+  @Patch(':access_token')
+  update(
+    @Param('access_token') access_token: string,
+    @Body() updateStudentDto: UpdateStudentDto,
+  ) {
+    return this.studentService.update(access_token, updateStudentDto);
+  }
+
+  @Delete(':access_token')
+  remove(@Param('access_token') access_token: string) {
+    return this.studentService.remove(access_token);
   }
 }

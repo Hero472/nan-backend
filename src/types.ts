@@ -1,14 +1,19 @@
 export type UserSend = {
-  id_user: number;
   name: string;
-  access_token: string;
-  refresh_token: string;
+  access_token: string | null;
+  refresh_token: string | null;
   user_type: UserType;
 };
 
 export enum UserType {
-  Admin = 4,
-  Professor = 3,
-  Parent = 2,
-  Student = 1,
+  Admin = 'admin',
+  Professor = 'professor',
+  Parent = 'parent',
+  Student = 'student',
+}
+
+export type StudentSend = {
+  name: string,
+  access_token: string,
+  refresh_token: string,
 }

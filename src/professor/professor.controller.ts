@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { CreateProfessorDto } from './dto/create-professor.dto';
 
@@ -16,9 +16,9 @@ export class ProfessorController {
     return this.professorService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.professorService.findOne(+id);
+  @Get(':access_token')
+  findOne(@Param('access_token') access_token: string) {
+    return this.professorService.findOne(access_token);
   }
 
   @Patch('initial-password-recovery:email')
@@ -41,5 +41,18 @@ export class ProfessorController {
     @Body('newPassword') newPassword: string
   ) {
     return this.professorService.resetPassword(email, code, newPassword);
+  }
+
+  @Patch(':access_token')
+  update(
+    @Param('access_token') access_token: string,
+    @Body() updateProfessorDto: CreateProfessorDto,
+  ) {
+    return this.professorService.update(access_token, updateProfessorDto);
+  }
+
+  @Delete(':access_token')
+  remove(@Param('access_token') access_token: string) {
+    return this.professorService.remove(access_token);
   }
 }
