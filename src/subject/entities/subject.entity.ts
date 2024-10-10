@@ -1,24 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Professor } from '../../professor/entities/professor.entity';
-import { LevelEnum, DayEnum, BlockEnum } from '../../enum';
 
-@Entity('subject')
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Schedule } from './schedule.entity';  // Importing the schedule entity
+
+@Entity()
 export class Subject {
   @PrimaryGeneratedColumn()
-  id_subject: number;
+  id: number;
 
-  @ManyToOne(() => Professor)
-  id_professor: Professor;
-
-  @Column({ type: 'text' })
+  @Column()
   name: string;
 
-  @Column({ type: 'enum', enum: LevelEnum })
-  level: LevelEnum;
-
-  @Column({ type: 'enum', enum: DayEnum })
-  day: DayEnum;
-
-  @Column({ type: 'enum', enum: BlockEnum })
-  block: BlockEnum;
+  @OneToMany(() => Schedule, (schedule) => schedule.subject)
+  schedules: Schedule[];
 }

@@ -1,26 +1,43 @@
+
 import { Injectable } from '@nestjs/common';
 import { CreateSubjectDto } from './dto/create-subject.dto';
-import { UpdateSubjectDto } from './dto/update-subject.dto';
+import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Subject } from './entities/subject.entity';
+import { Schedule } from './entities/schedule.entity';
 
 @Injectable()
 export class SubjectService {
-  create(createSubjectDto: CreateSubjectDto) {
-    return 'This action adds a new subject';
+  constructor(
+    @InjectRepository(Subject)
+    private subjectRepository: Repository<Subject>,
+    @InjectRepository(Schedule)
+    private scheduleRepository: Repository<Schedule>,
+  ) {}
+
+  async createSubject(createSubjectDto: CreateSubjectDto) {
+    const subject = this.subjectRepository.create(createSubjectDto);
+    return this.subjectRepository.save(subject);
   }
 
-  findAll() {
-    return `This action returns all subject`;
+  async createSchedule(createScheduleDto: CreateScheduleDto) {
+    const subject = await this.subjectRepository.findOne(createScheduleDto.subjectId);
+    if (!subject) {
+      throw new Error('Subject not found');
+    }
+    const schedule = this.scheduleRepository.create({
+      ...createScheduleDto,
+      subject,
+    });
+    return this.scheduleRepository.save(schedule);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} subject`;
+  findAllSubjects() {
+    return this.subjectRepository.find({ relations: ['schedules'] });
   }
 
-  update(id: number, updateSubjectDto: UpdateSubjectDto) {
-    return `This action updates a #${id} subject`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} subject`;
+  findOneSubject(id: number) {
+    return this.subjectRepository.findOne(id, { relations: ['schedules'] });
   }
 }
