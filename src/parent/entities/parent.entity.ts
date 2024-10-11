@@ -1,4 +1,4 @@
-import { Student } from 'src/student/entities/student.entity';
+import { Student } from '../../student/entities/student.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('parent')

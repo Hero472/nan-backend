@@ -1,16 +1,16 @@
 import { Controller, Post, Body, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Student } from 'src/student/entities/student.entity';
-import { Parent } from 'src/parent/entities/parent.entity';
-import { Professor } from 'src/professor/entities/professor.entity';
-import { UserType } from 'src/types';
+import { Student } from '../student/entities/student.entity';
+import { Parent } from '../parent/entities/parent.entity';
+import { Professor } from '../professor/entities/professor.entity';
+import { UserType } from '../types';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: { email: string; password: string; userType: 'student' | 'parent' | 'professor' }): Promise<{accessToken: string, refreshToken: string }> {
+  async login(@Body() loginDto: { email: string; password: string; userType: UserType }): Promise<{accessToken: string, refreshToken: string }> {
     const { email, password, userType } = loginDto;
     let bool: boolean;
     let user: Student | Parent | Professor | null = null;
@@ -58,50 +58,52 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Body() body: { refreshToken: string; userType: 'student' | 'parent' | 'professor' }): Promise<{accessToken: string, refreshToken: string }> {
-    const { refreshToken, userType } = body;
-    let user: Student | Parent | Professor | null;
+async refresh(
+  @Body() body: { refreshToken: string; userType: UserType }
+): Promise<{ accessToken: string; refreshToken: string }> {
+  const { refreshToken, userType } = body;
+  let user: Student | Parent | Professor | null;
 
-    switch (userType) {
-      case UserType.Student:
-        user = await this.authService.verifyRefreshTokenStudent(refreshToken);
-        break;
-      case 'parent':
-        user = await this.authService.verifyRefreshTokenParent(refreshToken);
-        break;
-      case 'professor':
-        user = await this.authService.verifyRefreshTokenProfessor(refreshToken);
-        break;
-      default:
-        throw new BadRequestException('Invalid user type');
-    }
-
-    if (!user) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-
-    let newAccessToken: string;
-    let newRefreshToken: string;
-
-    switch (userType) {
-      case 'student':
-        newAccessToken = await this.authService.generateAccessTokenStudent(user as Student);
-        newRefreshToken = await this.authService.generateRefreshTokenStudent(user as Student);
-        await this.authService.updateStudentTokens(user as Student, newAccessToken, newRefreshToken);
-        break;
-      case 'parent':
-        newAccessToken = await this.authService.generateAccessTokenParent(user as Parent);
-        newRefreshToken = await this.authService.generateRefreshTokenParent(user as Parent);
-        await this.authService.updateParentTokens(user as Parent, newAccessToken, newRefreshToken);
-        break;
-      case 'professor':
-        newAccessToken = await this.authService.generateAccessTokenProfessor(user as Professor);
-        newRefreshToken = await this.authService.generateRefreshTokenProfessor(user as Professor);
-        await this.authService.updateProfessorTokens(user as Professor, newAccessToken, newRefreshToken);
-        break;
-    }
-
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  switch (userType) {
+    case UserType.Student:
+      user = await this.authService.verifyRefreshTokenStudent(refreshToken);
+      break;
+    case UserType.Parent:
+      user = await this.authService.verifyRefreshTokenParent(refreshToken);
+      break;
+    case UserType.Professor:
+      user = await this.authService.verifyRefreshTokenProfessor(refreshToken);
+      break;
+    default:
+      throw new BadRequestException('Invalid user type');
   }
+
+  if (!user) {
+    throw new UnauthorizedException('Invalid refresh token');
+  }
+
+  let newAccessToken: string;
+  let newRefreshToken: string;
+
+  switch (userType) {
+    case UserType.Student:
+      newAccessToken = await this.authService.generateAccessTokenStudent(user as Student);
+      newRefreshToken = await this.authService.generateRefreshTokenStudent(user as Student);
+      await this.authService.updateStudentTokens(user as Student, newAccessToken, newRefreshToken);
+      break;
+    case UserType.Parent:
+      newAccessToken = await this.authService.generateAccessTokenParent(user as Parent);
+      newRefreshToken = await this.authService.generateRefreshTokenParent(user as Parent);
+      await this.authService.updateParentTokens(user as Parent, newAccessToken, newRefreshToken);
+      break;
+    case UserType.Professor:
+      newAccessToken = await this.authService.generateAccessTokenProfessor(user as Professor);
+      newRefreshToken = await this.authService.generateRefreshTokenProfessor(user as Professor);
+      await this.authService.updateProfessorTokens(user as Professor, newAccessToken, newRefreshToken);
+      break;
+  }
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+}
 }
 

@@ -11,12 +11,12 @@ import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
-import { Parent } from 'src/parent/entities/parent.entity';
-import { LevelEnum } from 'src/enum';
-import { MailService } from 'src/mail/mail.service';
+import { Parent } from '../parent/entities/parent.entity';
+import { LevelEnum } from '../enum';
+import { MailService } from '../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Injectable()
 export class StudentService {
@@ -172,6 +172,10 @@ export class StudentService {
       return { message: 'Password reset successfully' };
     } catch (error) {
       if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      if (error instanceof BadRequestException) {
         throw error;
       }
 

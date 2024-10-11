@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class MailService {
     this.transporter = nodemailer.createTransport({
       service: 'outlook', // Can be 'smtp.ethereal.email', 'outlook', etc.
       auth: {
-        user: 'your-email@gmail.com',
+        user: 'your-email@outlook.com',
         pass: 'your-email-password',
       },
     });
@@ -18,7 +18,7 @@ export class MailService {
 
   async sendMail(to: string, subject: string, text: string, html?: string) {
     const mailOptions = {
-      from: '"Your Name" <your-email@gmail.com>', // Sender address
+      from: '"Your Name" <your-email@outlook.com>', // Sender address
       to, // List of receivers
       subject, // Subject line
       text, // Plain text body
@@ -26,10 +26,9 @@ export class MailService {
     };
 
     try {
-      const info = await this.transporter.sendMail(mailOptions);
-      console.log('Message sent: %s', info.messageId);
+      await this.transporter.sendMail(mailOptions);
     } catch (error) {
-      console.error('Error sending email:', error);
+      throw new InternalServerErrorException(`An error ocurred while sending an email ${error}`)
     }
   }
 

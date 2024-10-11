@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ParentService } from './parent.service';
 import { CreateParentDto } from './dto/create-parent.dto';
+import { UpdateParentDto } from './dto/update-parent.dto';
 
 @Controller('parent')
 export class ParentController {
@@ -16,9 +17,9 @@ export class ParentController {
     return this.parentService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.parentService.findOne(+id);
+  @Get(':access_token')
+  findOne(@Param('access_token') access_token: string) {
+    return this.parentService.findOne(access_token);
   }
 
   @Patch('initial-password-recovery:email')
@@ -46,7 +47,7 @@ export class ParentController {
   @Patch(':access_token')
   update(
     @Param('access_token') access_token: string,
-    @Body() updateProfessorDto: CreateParentDto,
+    @Body() updateProfessorDto: UpdateParentDto,
   ) {
     return this.parentService.update(access_token, updateProfessorDto);
   }

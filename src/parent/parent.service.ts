@@ -4,10 +4,10 @@ import { UpdateParentDto } from './dto/update-parent.dto';
 import { Parent } from './entities/parent.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserSend, UserType } from 'src/types';
+import { UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
-import { MailService } from 'src/mail/mail.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { MailService } from '../mail/mail.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -50,18 +50,27 @@ export class ParentService {
     return this.parentRepository.find();
   }
 
-  async findOne(id: number): Promise<Parent> {
+  async findOne(access_token: string): Promise<UserSend> {
     try {
+      const decodedToken = this.jwtService.verify(access_token);
+      const parentId = decodedToken.sub;
+      const parentEmail = decodedToken.email;
+
       const parent = await this.parentRepository.findOne({
-        where: { id_parent: id },
+        where: { id_parent: parentId },
         relations: ['students'],
       });
 
       if (!parent) {
-        throw new NotFoundException(`parent with ID ${id} not found`);
+        throw new NotFoundException(`parent with email ${parentEmail} not found`);
       }
 
-      return parent;
+      return {
+        name: parent.name,
+        access_token: parent.access_token,
+        refresh_token: parent.refresh_token,
+        user_type: UserType.Parent
+      };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
         throw error;

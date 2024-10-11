@@ -9,16 +9,17 @@ import { CreateProfessorDto } from './dto/create-professor.dto';
 import { Professor } from './entities/professor.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MailService } from 'src/mail/mail.service';
-import { UserSend, UserType } from 'src/types';
+import { MailService } from '../mail/mail.service';
+import { UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateProfessorDto } from './dto/update-professor.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProfessorService {
-  jwtService: any;
   constructor(
+    private readonly jwtService: JwtService,
     @InjectRepository(Professor)
     private readonly professorRepository: Repository<Professor>,
     private readonly mailService: MailService,
@@ -212,10 +213,9 @@ export class ProfessorService {
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException;
+        throw error;
       }
-
-      throw new InternalServerErrorException('An error occurred while removing the professor');
+      throw new InternalServerErrorException(`An error occurred while removing the professor`);
     }
   }
 }
