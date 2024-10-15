@@ -16,7 +16,7 @@ export default registerAs('baseConfig', () => {
     },
     database: {
       host: process.env.TYPEORM_HOST,
-      port: process.env.TYPEORM_PORT || 5432,
+      port: process.env.TYPEORM_PORT,
       user: process.env.TYPEORM_USERNAME,
       pass: process.env.TYPEORM_PASSWORD,
       database: process.env.TYPEORM_DATABASE,

@@ -1,17 +1,18 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
   private readonly transporter;
 
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
     // Initialize Nodemailer transporter with SMTP settings (using outlook as an example)
     this.transporter = nodemailer.createTransport({
       service: 'outlook', // Can be 'smtp.ethereal.email', 'outlook', etc.
       auth: {
-        user: 'your-email@outlook.com',
-        pass: 'your-email-password',
+        user: this.configService.get<string>('EMAIL'),
+        pass: this.configService.get<string>('PASSWORD'),
       },
     });
   }

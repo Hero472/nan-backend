@@ -9,5 +9,7 @@ export default Joi.object({
   TYPEORM_ENTITIES: Joi.string(),
   TYPEORM_SYNCHRONIZE: Joi.string(),
   TYPEORM_LOGGING: Joi.boolean(),
-  JWT_SECRET: Joi.string().required()
+  JWT_SECRET: Joi.string().required(),
+  EMAIL: Joi.string(),
+  PASSWORD:Joi.string()
 });
