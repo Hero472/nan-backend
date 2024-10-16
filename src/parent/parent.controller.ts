@@ -44,12 +44,12 @@ export class ParentController {
     return this.parentService.resetPassword(email, code, newPassword);
   }
 
-  @Patch(':access_token')
+  @Patch(':id')
   update(
-    @Param('access_token') access_token: string,
+    @Param('id') id: string,
     @Body() updateProfessorDto: UpdateParentDto,
   ) {
-    return this.parentService.update(access_token, updateProfessorDto);
+    return this.parentService.update(+id, updateProfessorDto);
   }
 
   @Delete(':id')

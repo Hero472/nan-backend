@@ -44,12 +44,12 @@ export class ProfessorController {
     return this.professorService.resetPassword(email, code, newPassword);
   }
 
-  @Patch(':access_token')
+  @Patch(':id')
   update(
-    @Param('access_token') access_token: string,
+    @Param('id') id: string,
     @Body() updateProfessorDto: UpdateProfessorDto,
   ) {
-    return this.professorService.update(access_token, updateProfessorDto);
+    return this.professorService.update(+id, updateProfessorDto);
   }
 
   @Delete(':id')

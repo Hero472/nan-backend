@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,7 +15,6 @@ import { LevelEnum } from '../enum';
 import { MailService } from '../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Injectable()
 export class StudentService {
@@ -185,21 +183,17 @@ export class StudentService {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   async update(
-    access_token: string,
+    id: number,
     updateStudentDto: UpdateStudentDto,
   ): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(access_token);
-      const studentId = decodedToken.sub;
-
       const student = await this.studentRepository.findOne({
-        where: { id_student: studentId },
+        where: { id_student: id },
       });
 
       if (!student) {
-        throw new NotFoundException(`Student with ID ${studentId} not found`);
+        throw new NotFoundException(`Student with ID ${id} not found`);
       }
 
       const { name, email, password } = updateStudentDto;

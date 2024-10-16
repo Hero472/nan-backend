@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { CreateProfessorDto } from './dto/create-professor.dto';
 import { Professor } from './entities/professor.entity';
@@ -12,7 +11,6 @@ import { Repository } from 'typeorm';
 import { MailService } from '../mail/mail.service';
 import { UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateProfessorDto } from './dto/update-professor.dto';
 import { JwtService } from '@nestjs/jwt';
 
@@ -140,21 +138,17 @@ export class ProfessorService {
     return { message: 'Password reset successfully' };
   }
 
-  @UseGuards(JwtAuthGuard)
   async update(
-    access_token: string,
+    id: number,
     updateProfessorDto: UpdateProfessorDto,
   ): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(access_token);
-      const professorId = decodedToken.sub;
-
       const professor = await this.professorRepository.findOne({
-        where: { id_professor: professorId },
+        where: { id_professor: id },
       });
 
       if (!professor) {
-        throw new NotFoundException(`professor with ID ${professorId} not found`);
+        throw new NotFoundException(`professor with ID ${id} not found`);
       }
 
       const { name, email, password } = updateProfessorDto;

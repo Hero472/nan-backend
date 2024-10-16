@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
 import { Parent } from './entities/parent.entity';
@@ -7,7 +12,6 @@ import { Repository } from 'typeorm';
 import { UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
 import { MailService } from '../mail/mail.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -16,12 +20,11 @@ export class ParentService {
     private readonly jwtService: JwtService,
     @InjectRepository(Parent)
     private readonly parentRepository: Repository<Parent>,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
-  async create(createParentDto: CreateParentDto) : Promise<UserSend> {
-
-    const {name, email, password } = createParentDto;
+  async create(createParentDto: CreateParentDto): Promise<UserSend> {
+    const { name, email, password } = createParentDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -29,7 +32,7 @@ export class ParentService {
       name,
       email,
       password: Buffer.from(hashedPassword),
-    })
+    });
 
     try {
       const result = await this.parentRepository.save(parent);
@@ -38,11 +41,12 @@ export class ParentService {
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
-        user_type: UserType.Parent
+        user_type: UserType.Parent,
       };
-
     } catch (error: unknown) {
-      throw new InternalServerErrorException('An error occurred while saving the parent');
+      throw new InternalServerErrorException(
+        'An error occurred while saving the parent',
+      );
     }
   }
 
@@ -62,14 +66,16 @@ export class ParentService {
       });
 
       if (!parent) {
-        throw new NotFoundException(`parent with email ${parentEmail} not found`);
+        throw new NotFoundException(
+          `parent with email ${parentEmail} not found`,
+        );
       }
 
       return {
         name: parent.name,
         access_token: parent.access_token,
         refresh_token: parent.refresh_token,
-        user_type: UserType.Parent
+        user_type: UserType.Parent,
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
@@ -104,9 +110,15 @@ export class ParentService {
   }
 
   async verifyRecoveryCode(email: string, code: string) {
-    const parent = await this.parentRepository.findOne({ where: { email, recovery_code: code } });
+    const parent = await this.parentRepository.findOne({
+      where: { email, recovery_code: code },
+    });
 
-    if (!parent || !parent.recovery_code_expires_at || parent.recovery_code_expires_at < new Date()) {
+    if (
+      !parent ||
+      !parent.recovery_code_expires_at ||
+      parent.recovery_code_expires_at < new Date()
+    ) {
       throw new BadRequestException('Invalid or expired recovery code');
     }
 
@@ -114,9 +126,15 @@ export class ParentService {
   }
 
   async resetPassword(email: string, code: string, newPassword: string) {
-    const parent = await this.parentRepository.findOne({ where: { email, recovery_code: code } });
+    const parent = await this.parentRepository.findOne({
+      where: { email, recovery_code: code },
+    });
 
-    if (!parent ||!parent.recovery_code_expires_at || parent.recovery_code_expires_at < new Date()) {
+    if (
+      !parent ||
+      !parent.recovery_code_expires_at ||
+      parent.recovery_code_expires_at < new Date()
+    ) {
       throw new BadRequestException('Invalid or expired recovery code');
     }
 
@@ -130,21 +148,17 @@ export class ParentService {
     return { message: 'Password reset successfully' };
   }
 
-  @UseGuards(JwtAuthGuard)
   async update(
-    access_token: string,
+    id: number,
     updateParentDto: UpdateParentDto,
   ): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(access_token);
-      const parentId = decodedToken.sub;
-
       const parent = await this.parentRepository.findOne({
-        where: { id_parent: parentId },
+        where: { id_parent: id },
       });
 
       if (!parent) {
-        throw new NotFoundException(`parent with ID ${parentId} not found`);
+        throw new NotFoundException(`parent with ID ${id} not found`);
       }
 
       const { name, email, password } = updateParentDto;
@@ -168,7 +182,7 @@ export class ParentService {
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
-        user_type: UserType.Parent
+        user_type: UserType.Parent,
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
@@ -183,11 +197,19 @@ export class ParentService {
 
   async remove(id: number): Promise<UserSend> {
     try {
-
-      const parent: Parent | null = await this.parentRepository.findOne({ where: { id_parent: id } });
+      const parent: Parent | null = await this.parentRepository.findOne({
+        where: { id_parent: id },
+        relations: ['students'],
+      });
 
       if (!parent) {
         throw new NotFoundException(`Parent not found`);
+      }
+
+      if (parent.students.length > 0) {
+        throw new BadRequestException(
+          `Cannot remove parent with associated students`,
+        );
       }
 
       await this.parentRepository.remove(parent);
@@ -196,15 +218,20 @@ export class ParentService {
         name: parent.name,
         access_token: parent.access_token,
         refresh_token: parent.refresh_token,
-        user_type: UserType.Parent
+        user_type: UserType.Parent,
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException;
+        throw new NotFoundException();
       }
 
-      throw new InternalServerErrorException('An error occurred while removing the parent');
+      if (error instanceof BadRequestException) {
+        throw new NotFoundException();
+      }
+
+      throw new InternalServerErrorException(
+        'An error occurred while removing the parent',
+      );
     }
   }
-
 }

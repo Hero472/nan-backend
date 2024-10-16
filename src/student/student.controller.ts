@@ -52,12 +52,12 @@ export class StudentController {
     return this.studentService.resetPassword(email, code, newPassword);
   }
 
-  @Patch(':access_token')
+  @Patch(':id')
   update(
-    @Param('access_token') access_token: string,
+    @Param('id') id: string,
     @Body() updateStudentDto: UpdateStudentDto,
   ) {
-    return this.studentService.update(access_token, updateStudentDto);
+    return this.studentService.update(+id, updateStudentDto);
   }
 
   @Delete(':id')
