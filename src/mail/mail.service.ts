@@ -25,8 +25,12 @@ export class MailService {
       throw new BadRequestException('Missing required email parameters (to, subject, or text)');
     }
 
+    if (!isValidEmail(to)) {
+      throw new BadRequestException('Invalid email format');
+    }
+
     const mailOptions = {
-      from: `"Colegio" <${this.configService.get<string>('EMAIL')}>`, // Sender address
+      from: `"Colegio" <${this.configService.get<string>('EMAIL')}>`,
       to,
       subject, 
       text,
@@ -45,10 +49,18 @@ export class MailService {
   }
 
   async sendRecoveryEmail(to: string, recoveryCode: string) {
+    if (!isValidEmail(to)) {
+      throw new BadRequestException('Invalid email format');
+    }
     const subject = 'Password Recovery';
     const text = `Your recovery code is: ${recoveryCode}`;
     const html = `<p>Your recovery code is: <b>${recoveryCode}</b></p>`;
     await this.sendMail(to, subject, text, html);
   }
 
+}
+
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 }
