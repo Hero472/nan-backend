@@ -236,16 +236,13 @@ export class StudentService {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  async remove(token: string): Promise<UserSend> {
+  async remove(id: number): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(token);
-      const studentId = decodedToken.sub;
-      const studentEmail = decodedToken.email;
-      const student: Student | null = await this.studentRepository.findOne({ where: { id_student: studentId } });
+
+      const student: Student | null = await this.studentRepository.findOne({ where: { id_student: id } });
 
       if (!student) {
-        throw new NotFoundException(`Student with email ${studentEmail} not found`);
+        throw new NotFoundException(`Student not found`);
       }
 
       await this.studentRepository.remove(student);

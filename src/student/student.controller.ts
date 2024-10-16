@@ -60,8 +60,8 @@ export class StudentController {
     return this.studentService.update(access_token, updateStudentDto);
   }
 
-  @Delete(':access_token')
-  remove(@Param('access_token') access_token: string) {
-    return this.studentService.remove(access_token);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.studentService.remove(+id);
   }
 }
