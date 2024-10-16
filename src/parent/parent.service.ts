@@ -181,16 +181,13 @@ export class ParentService {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  async remove(token: string): Promise<UserSend> {
+  async remove(id: number): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(token);
-      const parentId = decodedToken.sub;
-      const parentEmail = decodedToken.email;
-      const parent: Parent | null = await this.parentRepository.findOne({ where: { id_parent: parentId } });
+
+      const parent: Parent | null = await this.parentRepository.findOne({ where: { id_parent: id } });
 
       if (!parent) {
-        throw new NotFoundException(`parent with email ${parentEmail} not found`);
+        throw new NotFoundException(`Parent not found`);
       }
 
       await this.parentRepository.remove(parent);

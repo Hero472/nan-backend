@@ -191,16 +191,12 @@ export class ProfessorService {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  async remove(token: string): Promise<UserSend> {
+  async remove(id: number): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(token);
-      const professorId = decodedToken.sub;
-      const professorEmail = decodedToken.email;
-      const professor: Professor | null = await this.professorRepository.findOne({ where: { id_professor: professorId } });
+      const professor: Professor | null = await this.professorRepository.findOne({ where: { id_professor: id } });
 
       if (!professor) {
-        throw new NotFoundException(`professor with email ${professorEmail} not found`);
+        throw new NotFoundException(`professor not found`);
       }
 
       await this.professorRepository.remove(professor);

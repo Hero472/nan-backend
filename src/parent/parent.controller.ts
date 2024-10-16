@@ -52,8 +52,8 @@ export class ParentController {
     return this.parentService.update(access_token, updateProfessorDto);
   }
 
-  @Delete(':access_token')
-  remove(@Param('access_token') access_token: string) {
-    return this.parentService.remove(access_token);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.parentService.remove(+id);
   }
 }

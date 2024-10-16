@@ -52,8 +52,8 @@ export class ProfessorController {
     return this.professorService.update(access_token, updateProfessorDto);
   }
 
-  @Delete(':access_token')
-  remove(@Param('access_token') access_token: string) {
-    return this.professorService.remove(access_token);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.professorService.remove(+id);
   }
 }
