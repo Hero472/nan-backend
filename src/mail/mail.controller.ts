@@ -1,13 +1,14 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { MailService } from './mail.service';
+import { CreateMailDto } from './dto/create-mail.dto';
 
 @Controller('mail')
 export class MailController {
   constructor(private readonly mailService: MailService) {}
 
   @Post('send')
-  async sendMail(@Body() to: string, subject: string, text: string, html?: string ) {
-    await this.mailService.sendMail(to, subject, text, html);
+  async sendMail(@Body() sendMail : CreateMailDto) {
+    await this.mailService.sendMail(sendMail.to, sendMail.subject,  sendMail.text,  sendMail.html);
     return { message: 'Email sent successfully' };
   }
 

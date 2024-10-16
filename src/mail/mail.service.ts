@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 
@@ -9,27 +9,38 @@ export class MailService {
   constructor(private readonly configService: ConfigService) {
     // Initialize Nodemailer transporter with SMTP settings (using outlook as an example)
     this.transporter = nodemailer.createTransport({
-      service: 'outlook', // Can be 'smtp.ethereal.email', 'outlook', etc.
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: this.configService.get<string>('EMAIL'),
-        pass: this.configService.get<string>('PASSWORD'),
+        pass: this.configService.get<string>('APP_PASSWORD'),
       },
     });
   }
 
   async sendMail(to: string, subject: string, text: string, html?: string) {
+
+    if (!to || !subject || !text) {
+      throw new BadRequestException('Missing required email parameters (to, subject, or text)');
+    }
+
     const mailOptions = {
-      from: '"Your Name" <your-email@outlook.com>', // Sender address
-      to, // List of receivers
-      subject, // Subject line
-      text, // Plain text body
-      html, // HTML body (optional)
+      from: `"Colegio" <${this.configService.get<string>('EMAIL')}>`, // Sender address
+      to,
+      subject, 
+      text,
+      html,
     };
+
+    console.log('Sending email to:', to);
 
     try {
       await this.transporter.sendMail(mailOptions);
-    } catch (error) {
-      throw new InternalServerErrorException(`An error ocurred while sending an email ${error}`)
+      console.log('Email sent successfully');
+    } catch (error: unknown) {
+      console.error('Error sending email:', error);
+      throw new InternalServerErrorException(`An error occurred while sending an email`);
     }
   }
 

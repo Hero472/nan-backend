@@ -11,5 +11,6 @@ export default Joi.object({
   TYPEORM_LOGGING: Joi.boolean(),
   JWT_SECRET: Joi.string().required(),
   EMAIL: Joi.string(),
-  PASSWORD:Joi.string()
+  PASSWORD:Joi.string(),
+  APP_PASSWORD: Joi.string()
 });
