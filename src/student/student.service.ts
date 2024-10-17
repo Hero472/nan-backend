@@ -186,6 +186,7 @@ export class StudentService {
   async update(
     id: number,
     updateStudentDto: UpdateStudentDto,
+    level: LevelEnum
   ): Promise<UserSend> {
     try {
       const student = await this.studentRepository.findOne({
@@ -209,6 +210,10 @@ export class StudentService {
       if (password) {
         const hashedPassword = await bcrypt.hash(password, 10);
         student.password = Buffer.from(hashedPassword);
+      }
+
+      if (level) {
+        student.level = level;
       }
 
       const result = await this.studentRepository.save(student);

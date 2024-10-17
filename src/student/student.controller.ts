@@ -10,6 +10,7 @@ import {
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { LevelEnum } from 'src/enum';
 
 @Controller('student')
 export class StudentController {
@@ -56,8 +57,9 @@ export class StudentController {
   update(
     @Param('id') id: string,
     @Body() updateStudentDto: UpdateStudentDto,
+    @Body() level: LevelEnum
   ) {
-    return this.studentService.update(+id, updateStudentDto);
+    return this.studentService.update(+id, updateStudentDto, level);
   }
 
   @Delete(':id')
