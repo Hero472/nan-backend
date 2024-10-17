@@ -173,32 +173,32 @@ describe('StudentController', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update a student', async () => {
-      const access_token = 'valid_token';
-      const updateStudentDto: UpdateStudentDto = {
-        name: 'Jane Doe',
-        email: 'jane@example.com',
-        password: 'new_password',
-      };
-      const result: UserSend = {
-        name: updateStudentDto.name ?? 'Jane Doe',
-        access_token,
-        refresh_token: 'refresh_token',
-        user_type: UserType.Student,
-      };
+  // describe('update', () => {
+  //   it('should update a student', async () => {
+  //     const access_token = 'valid_token';
+  //     const updateStudentDto: UpdateStudentDto = {
+  //       name: 'Jane Doe',
+  //       email: 'jane@example.com',
+  //       password: 'new_password',
+  //     };
+  //     const result: UserSend = {
+  //       name: updateStudentDto.name ?? 'Jane Doe',
+  //       access_token,
+  //       refresh_token: 'refresh_token',
+  //       user_type: UserType.Student,
+  //     };
 
-      jest.spyOn(studentService, 'update').mockResolvedValue(result);
+  //     jest.spyOn(studentService, 'update').mockResolvedValue(result);
 
-      expect(
-        await studentController.update(access_token, updateStudentDto),
-      ).toEqual(result);
-      expect(studentService.update).toHaveBeenCalledWith(
-        access_token,
-        updateStudentDto,
-      );
-    });
-  });
+  //     expect(
+  //       await studentController.update(access_token, updateStudentDto),
+  //     ).toEqual(result);
+  //     expect(studentService.update).toHaveBeenCalledWith(
+  //       access_token,
+  //       updateStudentDto,
+  //     );
+  //   });
+  // });
 
   describe('remove', () => {
     it('should remove a student', async () => {

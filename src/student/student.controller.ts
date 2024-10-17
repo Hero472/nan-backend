@@ -56,9 +56,9 @@ export class StudentController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateStudentDto: UpdateStudentDto,
-    @Body() level: LevelEnum
+    @Body() body: { updateStudentDto: UpdateStudentDto; level: LevelEnum },
   ) {
+    const { updateStudentDto, level } = body;
     return this.studentService.update(+id, updateStudentDto, level);
   }
 
