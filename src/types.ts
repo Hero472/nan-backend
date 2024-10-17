@@ -13,7 +13,7 @@ export enum UserType {
 }
 
 export type StudentSend = {
-  name: string,
-  access_token: string,
-  refresh_token: string,
-}
+  name: string;
+  access_token: string;
+  refresh_token: string;
+};

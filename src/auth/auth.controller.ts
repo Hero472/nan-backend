@@ -34,7 +34,7 @@ export class AuthController {
     }
 
     let accessToken: string = '';
-  let refreshToken: string = '';
+    let refreshToken: string = '';
 
     switch (userType) {
       case UserType.Student:

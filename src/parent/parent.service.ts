@@ -56,7 +56,9 @@ export class ParentService {
 
   async findOne(access_token: string): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(access_token);
+      console.log("try decode")
+      const decodedToken = this.jwtService.verify(access_token, { secret: process.env.JWT_SECRET });
+      console.log(decodedToken+" decoded")
       const parentId = decodedToken.sub;
       const parentEmail = decodedToken.email;
 
@@ -78,6 +80,7 @@ export class ParentService {
         user_type: UserType.Parent,
       };
     } catch (error: unknown) {
+      console.error('Error during parent fetch:', error);
       if (error instanceof NotFoundException) {
         throw error;
       }
