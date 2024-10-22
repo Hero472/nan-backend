@@ -1,3 +1,5 @@
+import { BlockEnum, DayEnum, LevelEnum } from "./enum";
+
 export type UserSend = {
   name: string;
   access_token: string | null;
@@ -17,3 +19,10 @@ export type StudentSend = {
   access_token: string;
   refresh_token: string;
 };
+
+export type SubjectSend = {
+  name: string,
+  level: LevelEnum,
+  day: DayEnum,
+  block: BlockEnum
+}

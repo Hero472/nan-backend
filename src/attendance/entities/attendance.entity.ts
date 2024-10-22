@@ -2,7 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Student } from '../../student/entities/student.entity';
 import { Subject } from '../../subject/entities/subject.entity';
 
-// siguiente paso, toma de asistencia
 @Entity('attendance')
 export class Attendance {
   @PrimaryGeneratedColumn()
