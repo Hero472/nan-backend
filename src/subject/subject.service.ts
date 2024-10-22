@@ -17,32 +17,37 @@ export class SubjectService {
   ) {}
 
   async create(createSubjectDto: CreateSubjectDto): Promise<SubjectSend> {
+
     const { id_professor, ...subjectData } = createSubjectDto;
-
-    const professor = await this.professorRepository.findOne({
-      where: { id_professor },
-    });
-    if (!professor) {
-      throw new NotFoundException(
-        `Professor with id ${id_professor} not found`,
-      );
+    try {
+      const professor = await this.professorRepository.findOne({
+        where: { id_professor },
+      });
+      if (!professor) {
+        throw new NotFoundException(
+          `Professor with id ${id_professor} not found`,
+        );
+      }
+  
+      const subject = this.subjectRepository.create({
+        ...subjectData,
+        id_professor: professor,
+      });
+  
+      const savedSubject = await this.subjectRepository.save(subject);
+  
+      const subjectSend: SubjectSend = {
+        name: savedSubject.name,
+        level: savedSubject.level,
+        day: savedSubject.day,
+        block: savedSubject.block,
+      };
+  
+      return subjectSend;
+    } catch(error: unknown) {
+      console.log(error)
+      throw error;
     }
-
-    const subject = this.subjectRepository.create({
-      ...subjectData,
-      id_professor: professor,
-    });
-
-    const savedSubject = await this.subjectRepository.save(subject);
-
-    const subjectSend: SubjectSend = {
-      name: savedSubject.name,
-      level: savedSubject.level,
-      day: savedSubject.day,
-      block: savedSubject.block,
-    };
-
-    return subjectSend;
   }
 
   async findAll(): Promise<SubjectSend[]> {

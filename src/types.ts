@@ -20,6 +20,11 @@ export type StudentSend = {
   refresh_token: string;
 };
 
+export type StudentSendFromParent = {
+  name: string,
+  level: LevelEnum,
+}
+
 export type SubjectSend = {
   name: string,
   level: LevelEnum,

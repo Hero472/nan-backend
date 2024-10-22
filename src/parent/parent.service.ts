@@ -9,7 +9,7 @@ import { UpdateParentDto } from './dto/update-parent.dto';
 import { Parent } from './entities/parent.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserSend, UserType } from '../types';
+import { StudentSendFromParent, UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
 import { MailService } from '../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
@@ -56,9 +56,11 @@ export class ParentService {
 
   async findOne(access_token: string): Promise<UserSend> {
     try {
-      console.log("try decode")
-      const decodedToken = this.jwtService.verify(access_token, { secret: process.env.JWT_SECRET });
-      console.log(decodedToken+" decoded")
+      console.log('try decode');
+      const decodedToken = this.jwtService.verify(access_token, {
+        secret: process.env.JWT_SECRET,
+      });
+      console.log(decodedToken + ' decoded');
       const parentId = decodedToken.sub;
       const parentEmail = decodedToken.email;
 
@@ -149,6 +151,35 @@ export class ParentService {
     await this.parentRepository.save(parent);
 
     return { message: 'Password reset successfully' };
+  }
+
+  async getStudents(access_token: string): Promise<StudentSendFromParent[]> {
+    try {
+      const decodedToken = this.jwtService.verify(access_token, {
+        secret: process.env.JWT_SECRET,
+      });
+      console.log(decodedToken + ' decoded');
+      const parentId = decodedToken.sub;
+
+      const parent = await this.parentRepository.findOne({
+        where: { id_parent: parentId },
+        relations: ['students'],
+      });
+
+      if (!parent) {
+        throw new Error('Parent not found');
+      }
+
+      const result: StudentSendFromParent[] = parent.students.map(student => ({
+        name: student.name,
+        level: student.level,
+      }));
+  
+      return result;
+
+    } catch(error: unknown) {
+      throw error;
+    }
   }
 
   async update(

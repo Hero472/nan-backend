@@ -23,6 +23,8 @@ import { SubjectController } from './subject/subject.controller';
 import { ParentController } from './parent/parent.controller';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AttendanceController } from './attendance/attendance.controller';
 
 @Module({
   imports: [
@@ -39,6 +41,15 @@ import { AuthModule } from './auth/auth.module';
       envFilePath: '.env',
       load: [baseConfig],
       validationSchema: configValidation,
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }),
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -79,7 +90,7 @@ import { AuthModule } from './auth/auth.module';
     MailModule,
     AuthModule
   ],
-  controllers: [AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController],
+  controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController],
   providers: [AppService],
 })
 export class AppModule {}
