@@ -9,6 +9,7 @@ import { SubjectSend } from '../types';
 
 @Injectable()
 export class SubjectService {
+  jwtService: any;
   constructor(
     @InjectRepository(Subject)
     private readonly subjectRepository: Repository<Subject>,
@@ -18,7 +19,8 @@ export class SubjectService {
 
   async create(createSubjectDto: CreateSubjectDto): Promise<SubjectSend> {
 
-    const { id_professor, ...subjectData } = createSubjectDto;
+    const { accessToken, ...subjectData } = createSubjectDto;
+    const id_professor = this.jwtService.verify(accessToken).sub;
     try {
       const professor = await this.professorRepository.findOne({
         where: { id_professor },
@@ -107,18 +109,6 @@ export class SubjectService {
 
     if (updateSubjectDto.block !== undefined) {
       subject.block = updateSubjectDto.block;
-    }
-
-    if (updateSubjectDto.id_professor !== undefined) {
-      const professor = await this.professorRepository.findOne({
-        where: { id_professor: updateSubjectDto.id_professor },
-      });
-      if (!professor) {
-        throw new NotFoundException(
-          `Professor with id ${updateSubjectDto.id_professor} not found`,
-        );
-      }
-      subject.id_professor = professor;
     }
 
     const subjectNew = await this.subjectRepository.save(subject);
