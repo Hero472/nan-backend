@@ -26,6 +26,7 @@ export type StudentSendFromParent = {
 }
 
 export type SubjectSend = {
+  id_subject: number,
   name: string,
   level: LevelEnum,
   day: DayEnum,

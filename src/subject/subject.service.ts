@@ -37,6 +37,7 @@ export class SubjectService {
       const savedSubject = await this.subjectRepository.save(subject);
   
       const subjectSend: SubjectSend = {
+        id_subject: savedSubject.id_subject,
         name: savedSubject.name,
         level: savedSubject.level,
         day: savedSubject.day,
@@ -54,6 +55,7 @@ export class SubjectService {
     const subjects: Subject[] = await this.subjectRepository.find();
 
     const subjectSends: SubjectSend[] = subjects.map((subject) => ({
+      id_subject: subject.id_subject,
       name: subject.name,
       level: subject.level,
       day: subject.day,
@@ -72,6 +74,7 @@ export class SubjectService {
     }
 
     const subjectSend: SubjectSend = {
+      id_subject: subject.id_subject,
       name: subject.name,
       level: subject.level,
       day: subject.day,
@@ -112,6 +115,7 @@ export class SubjectService {
     const subjectNew = await this.subjectRepository.save(subject);
 
     const subjectSend: SubjectSend = {
+      id_subject: subjectNew.id_subject,
       name: subjectNew.name,
       level: subjectNew.level,
       day: subjectNew.day,
@@ -137,6 +141,7 @@ export class SubjectService {
     }
 
     const subjectSend: SubjectSend = {
+      id_subject: subject.id_subject,
       name: subject.name,
       level: subject.level,
       day: subject.day,
