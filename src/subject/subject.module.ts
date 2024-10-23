@@ -6,7 +6,8 @@ import { Professor } from 'src/professor/entities/professor.entity';
 import { Subject } from './entities/subject.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Subject, Professor])],
+  imports: [TypeOrmModule.forFeature([Subject, Professor]),
+],
   controllers: [SubjectController],
   providers: [SubjectService],
   exports: [SubjectService]

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Subject } from '../../subject/entities/subject.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('professor')
 export class Professor {
@@ -31,4 +32,7 @@ export class Professor {
 
   @Column({ type: 'timestamptz', nullable: true })
   refresh_token_expires_at: Date | null = null;
+
+  @OneToMany(() => Subject, (subject) => subject.professor)
+  subjects!: Subject[];
 }

@@ -12,5 +12,6 @@ export default Joi.object({
   JWT_SECRET: Joi.string().required(),
   EMAIL: Joi.string(),
   PASSWORD:Joi.string(),
-  APP_PASSWORD: Joi.string()
+  APP_PASSWORD: Joi.string(),
+  MONGODB_URI: Joi.string()
 });

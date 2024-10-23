@@ -31,7 +31,7 @@ export class SubjectService {
   
       const subject = this.subjectRepository.create({
         ...subjectData,
-        id_professor: professor,
+        professor: professor,
       });
   
       const savedSubject = await this.subjectRepository.save(subject);

@@ -7,9 +7,6 @@ export class Subject {
   @PrimaryGeneratedColumn()
   id_subject!: number;
 
-  @ManyToOne(() => Professor)
-  id_professor!: Professor;
-
   @Column({ type: 'text' })
   name!: string;
 
@@ -21,4 +18,7 @@ export class Subject {
 
   @Column({ type: 'enum', enum: BlockEnum })
   block!: BlockEnum;
+
+  @ManyToOne(() => Professor, (professor) => professor.subjects)
+  professor!: Professor;
 }

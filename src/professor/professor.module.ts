@@ -3,7 +3,7 @@ import { ProfessorService } from './professor.service';
 import { ProfessorController } from './professor.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Professor } from './entities/professor.entity';
-import { MailService } from 'src/mail/mail.service';
+import { MailService } from '../mail/mail.service';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({

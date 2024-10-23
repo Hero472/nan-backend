@@ -10,7 +10,6 @@ import { MedicalInfoModule } from './medical_info/medical_info.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Subject } from 'rxjs';
 import { Professor } from './professor/entities/professor.entity';
 import { Student } from './student/entities/student.entity';
 import { Parent } from './parent/entities/parent.entity';
@@ -25,6 +24,7 @@ import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AttendanceController } from './attendance/attendance.controller';
+import { Subject } from './subject/entities/subject.entity';
 
 @Module({
   imports: [
