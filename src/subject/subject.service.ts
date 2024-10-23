@@ -6,11 +6,12 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Professor } from '../professor/entities/professor.entity';
 import { SubjectSend } from '../types';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class SubjectService {
-  jwtService: any;
   constructor(
+    private readonly jwtService: JwtService,
     @InjectRepository(Subject)
     private readonly subjectRepository: Repository<Subject>,
     @InjectRepository(Professor)
