@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsInt, IsNotEmpty, IsString } from "class-validator";
 import { BlockEnum, DayEnum, LevelEnum } from "../../enum";
 
 export class CreateSubjectDto {
@@ -19,6 +19,6 @@ export class CreateSubjectDto {
   block!: BlockEnum;
 
   @IsNotEmpty()
-  @IsString()
-  accessToken!: string;
+  @IsInt()
+  id_professor!: number;
 }

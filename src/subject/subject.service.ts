@@ -6,12 +6,10 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Professor } from '../professor/entities/professor.entity';
 import { SubjectSend } from '../types';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class SubjectService {
   constructor(
-    private readonly jwtService: JwtService,
     @InjectRepository(Subject)
     private readonly subjectRepository: Repository<Subject>,
     @InjectRepository(Professor)
@@ -20,8 +18,7 @@ export class SubjectService {
 
   async create(createSubjectDto: CreateSubjectDto): Promise<SubjectSend> {
 
-    const { accessToken, ...subjectData } = createSubjectDto;
-    const id_professor = this.jwtService.verify(accessToken).sub;
+    const { id_professor, ...subjectData } = createSubjectDto;
     try {
       const professor = await this.professorRepository.findOne({
         where: { id_professor },
