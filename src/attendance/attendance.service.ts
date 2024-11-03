@@ -15,6 +15,7 @@ export class AttendanceService {
     const attendance = new this.attendanceModel({
       id_subject: createAttendanceDto.id_subject,
       date: createAttendanceDto.date,
+      level: createAttendanceDto.level,
       students: createAttendanceDto.studentIds,
     });
 

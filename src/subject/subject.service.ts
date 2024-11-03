@@ -5,7 +5,8 @@ import { Subject } from './entities/subject.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Professor } from '../professor/entities/professor.entity';
-import { SubjectSend } from '../types';
+import { StudentSubjectSend, SubjectSend } from '../types';
+import { Student } from 'src/student/entities/student.entity';
 
 @Injectable()
 export class SubjectService {
@@ -14,10 +15,11 @@ export class SubjectService {
     private readonly subjectRepository: Repository<Subject>,
     @InjectRepository(Professor)
     private readonly professorRepository: Repository<Professor>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>,
   ) {}
 
   async create(createSubjectDto: CreateSubjectDto): Promise<SubjectSend> {
-
     const { id_professor, ...subjectData } = createSubjectDto;
     try {
       const professor = await this.professorRepository.findOne({
@@ -28,14 +30,14 @@ export class SubjectService {
           `Professor with id ${id_professor} not found`,
         );
       }
-  
+
       const subject = this.subjectRepository.create({
         ...subjectData,
         professor: professor,
       });
-  
+
       const savedSubject = await this.subjectRepository.save(subject);
-  
+
       const subjectSend: SubjectSend = {
         id_subject: savedSubject.id_subject,
         name: savedSubject.name,
@@ -43,10 +45,10 @@ export class SubjectService {
         day: savedSubject.day,
         block: savedSubject.block,
       };
-  
+
       return subjectSend;
-    } catch(error: unknown) {
-      console.log(error)
+    } catch (error: unknown) {
+      console.log(error);
       throw error;
     }
   }
@@ -82,6 +84,38 @@ export class SubjectService {
     };
 
     return subjectSend;
+  }
+
+  async getStudentSubject(
+    id_subject: number,
+  ): Promise<StudentSubjectSend[]> {
+
+    const subject = await this.subjectRepository.findOne({
+      where: { id_subject },
+    });
+
+    if (!subject) {
+      throw new NotFoundException(`Subject with id ${id_subject} not found`);
+    }
+
+    const students = await this.studentRepository
+      .createQueryBuilder('student')
+      .where('student.level = :level', { level: subject.level })
+      .select(['student.id_student', 'student.name'])
+      .getMany();
+
+    if (!students.length) {
+      throw new NotFoundException(
+        `No students found for subject with id ${id_subject} at level ${subject.level}`,
+      );
+    }
+
+    const result: StudentSubjectSend[] = students.map((student) => ({
+      id_student: student.id_student,
+      name: student.name,
+    }));
+
+    return result;
   }
 
   async update(

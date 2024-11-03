@@ -1,4 +1,5 @@
-import { IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { LevelEnum } from 'src/enum';
 
 export class CreateAttendanceDto {
   @IsNotEmpty()
@@ -9,8 +10,11 @@ export class CreateAttendanceDto {
   @IsDateString()
   date!: string;
 
+  @IsEnum(LevelEnum)
+  level!: LevelEnum;
+
   @IsArray()
   @IsNotEmpty({ each: true })
   @IsString({ each: true })
-  studentIds!: string[];  // Array of student IDs from PostgreSQL
+  studentIds!: string[];
 }
