@@ -57,7 +57,7 @@ export class ParentController {
   async getStudents(
     @Param('accessToken') accessToken: string,
   ): Promise<StudentSendFromParent[]> {
-    return this.getStudents(accessToken);
+    return this.parentService.getStudents(accessToken);
   }
 
   @Patch(':id')
