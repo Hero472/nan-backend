@@ -57,11 +57,9 @@ export class ParentService {
 
   async findOne(access_token: string): Promise<UserSend> {
     try {
-      console.log('try decode');
       const decodedToken = this.jwtService.verify(access_token, {
         secret: process.env.JWT_SECRET,
       });
-      console.log(decodedToken + ' decoded');
       const parentId = decodedToken.sub;
       const parentEmail = decodedToken.email;
 
@@ -110,7 +108,6 @@ export class ParentService {
 
     await this.parentRepository.save(parent);
 
-    // Send recovery email
     await this.mailService.sendRecoveryEmail(parent.email, recoveryCode);
 
     return { message: 'Recovery email sent' };

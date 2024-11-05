@@ -55,7 +55,7 @@ export class ParentController {
 
   @Get('get-students/:accessToken')
   async getStudents(
-    @Param() accessToken: string,
+    @Param('accessToken') accessToken: string,
   ): Promise<StudentSendFromParent[]> {
     return this.getStudents(accessToken);
   }
