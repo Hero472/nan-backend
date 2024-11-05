@@ -25,6 +25,8 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AttendanceController } from './attendance/attendance.controller';
 import { Subject } from './subject/entities/subject.entity';
+import { GradeController } from './grade/grade.controller';
+import { Grade } from './grade/entities/grade.entity';
 
 @Module({
   imports: [
@@ -78,7 +80,7 @@ import { Subject } from './subject/entities/subject.entity';
           password,
           username,
           database,
-          entities: [Professor, Student, Subject, Parent],
+          entities: [Professor, Student, Subject, Parent, Grade],
           synchronize,
           logging,
           ssl: {
@@ -90,7 +92,7 @@ import { Subject } from './subject/entities/subject.entity';
     MailModule,
     AuthModule
   ],
-  controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController],
+  controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController, GradeController],
   providers: [AppService],
 })
 export class AppModule {}

@@ -50,9 +50,11 @@ export class ProfessorService {
     }
   }
 
-  findAll() {
+  async findAll() {
     return this.professorRepository.find();
   }
+
+  //async getSubjects()
 
   async findOne(access_token: string): Promise<UserSend> {
     try {

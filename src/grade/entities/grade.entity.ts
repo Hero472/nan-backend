@@ -9,10 +9,10 @@ export class Grade {
   @PrimaryGeneratedColumn()
   id_grade!: number;
 
-  @ManyToOne(() => Student, student => student.grades)
+  @ManyToOne(() => Student, (student) => student.grades)
   student!: Student;
 
-  @ManyToOne(() => Subject, subject => subject.grades)
+  @ManyToOne(() => Subject, (subject) => subject.grades)
   subject!: Subject;
 
   @Column({ type: 'float' })
