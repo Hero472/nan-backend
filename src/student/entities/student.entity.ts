@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Parent } from '../../parent/entities/parent.entity';
 import { LevelEnum } from '../../enum';
 import { IsNotEmpty } from 'class-validator';
+import { Grade } from 'src/grade/entities/grade.entity';
 
 @Entity('student')
 export class Student {
@@ -44,4 +45,7 @@ export class Student {
 
   @ManyToOne(() => Parent, (parent) => parent.students)
   parent!: Parent;
+
+  @OneToMany(() => Grade, (grade) => grade.student)
+  grades!: Grade[];
 }
