@@ -52,6 +52,7 @@ export class StudentService {
       const result = await this.studentRepository.save(student);
 
       return {
+        id: student.id_student,
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
@@ -90,6 +91,7 @@ export class StudentService {
       }
 
       return {
+        id: student.id_student,
         name: student.name,
         access_token: student.access_token,
         refresh_token: student.refresh_token,
@@ -219,6 +221,7 @@ export class StudentService {
       const result = await this.studentRepository.save(student);
 
       return {
+        id: student.id_student,
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
@@ -247,6 +250,7 @@ export class StudentService {
       await this.studentRepository.remove(student);
 
       return {
+        id: student.id_student,
         name: student.name,
         access_token: student.access_token,
         refresh_token: student.refresh_token,

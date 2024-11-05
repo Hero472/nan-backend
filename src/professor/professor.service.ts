@@ -9,7 +9,7 @@ import { Professor } from './entities/professor.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailService } from '../mail/mail.service';
-import { UserSend, UserType } from '../types';
+import { SubjectProfSend, UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
 import { UpdateProfessorDto } from './dto/update-professor.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -38,6 +38,7 @@ export class ProfessorService {
       const result = await this.professorRepository.save(professor);
 
       return {
+        id: professor.id_professor,
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
@@ -54,7 +55,28 @@ export class ProfessorService {
     return this.professorRepository.find();
   }
 
-  //async getSubjects()
+  async getSubjects(access_token: string): Promise<SubjectProfSend[]> {
+
+    const decodedToken = this.jwtService.verify(access_token, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    const parentId = decodedToken.sub;
+
+    const professor = await this.professorRepository.findOne({
+      where: { id_professor: parentId },
+      relations: ['subjects'],
+    });
+
+    if (!professor) {
+      throw new NotFoundException(`Professor with ID ${parentId} not found`);
+    }
+
+    return professor.subjects.map((subject) => ({
+      name: subject.name,
+      level: subject.level
+    }));
+  }
 
   async findOne(access_token: string): Promise<UserSend> {
     try {
@@ -70,6 +92,7 @@ export class ProfessorService {
       }
 
       return {
+        id: professor.id_professor,
         name: professor.name,
         access_token: professor.access_token,
         refresh_token: professor.refresh_token,
@@ -103,7 +126,6 @@ export class ProfessorService {
 
     await this.professorRepository.save(professor);
 
-    // Send recovery email
     await this.mailService.sendRecoveryEmail(professor.email, recoveryCode);
 
     return { message: 'Recovery email sent' };
@@ -171,6 +193,7 @@ export class ProfessorService {
       const result = await this.professorRepository.save(professor);
 
       return {
+        id: professor.id_professor,
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
@@ -198,6 +221,7 @@ export class ProfessorService {
       await this.professorRepository.remove(professor);
 
       return {
+        id: professor.id_professor,
         name: professor.name,
         access_token: professor.access_token,
         refresh_token: professor.refresh_token,

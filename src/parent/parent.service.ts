@@ -38,6 +38,7 @@ export class ParentService {
       const result = await this.parentRepository.save(parent);
 
       return {
+        id: parent.id_parent,
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
@@ -76,6 +77,7 @@ export class ParentService {
       }
 
       return {
+        id: parent.id_parent,
         name: parent.name,
         access_token: parent.access_token,
         refresh_token: parent.refresh_token,
@@ -158,7 +160,6 @@ export class ParentService {
       const decodedToken = this.jwtService.verify(access_token, {
         secret: process.env.JWT_SECRET,
       });
-      console.log(decodedToken + ' decoded');
       const parentId = decodedToken.sub;
 
       const parent = await this.parentRepository.findOne({
@@ -213,6 +214,7 @@ export class ParentService {
       const result = await this.parentRepository.save(parent);
 
       return {
+        id: parent.id_parent,
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
@@ -249,6 +251,7 @@ export class ParentService {
       await this.parentRepository.remove(parent);
 
       return {
+        id: parent.id_parent,
         name: parent.name,
         access_token: parent.access_token,
         refresh_token: parent.refresh_token,

@@ -1,6 +1,7 @@
 import { BlockEnum, DayEnum, LevelEnum } from "./enum";
 
 export type UserSend = {
+  id: number;
   name: string;
   access_token: string | null;
   refresh_token: string | null;
@@ -36,4 +37,14 @@ export type SubjectSend = {
   level: LevelEnum,
   day: DayEnum,
   block: BlockEnum
+}
+
+export type SubjectProfSend = {
+  name: string,
+  level: LevelEnum
+}
+
+export type ParentStudentSend = {
+  name: string,
+  level: LevelEnum
 }
