@@ -48,3 +48,12 @@ export type ParentStudentSend = {
   name: string,
   level: LevelEnum
 }
+
+export type GradeSend = {
+  id_grade: number,
+  student_name: string,
+  subject_name: string,
+  grade: number,
+  level: LevelEnum,
+  year: number
+}

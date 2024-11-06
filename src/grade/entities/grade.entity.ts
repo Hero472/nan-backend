@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Student } from '../../student/entities/student.entity';
 import { Subject } from '../../subject/entities/subject.entity';
 import { IsInt, Max, Min } from 'class-validator';
@@ -10,9 +10,11 @@ export class Grade {
   id_grade!: number;
 
   @ManyToOne(() => Student, (student) => student.grades)
+  @JoinColumn({ name: 'id_student' })
   student!: Student;
 
   @ManyToOne(() => Subject, (subject) => subject.grades)
+  @JoinColumn({ name: 'id_subject' })
   subject!: Subject;
 
   @Column({ type: 'float' })

@@ -1,12 +1,17 @@
 import { IsEnum, IsInt, IsNumber, Max, Min } from 'class-validator';
-import { LevelEnum } from 'src/enum';
+import { LevelEnum } from '../../enum';
+import { PrimaryGeneratedColumn } from 'typeorm';
 
 export class CreateGradeDto {
-  @IsInt()
-  studentId!: number;
+
+  @PrimaryGeneratedColumn()
+  id_grade!: number;
 
   @IsInt()
-  subjectId!: number;
+  id_student!: number;
+
+  @IsInt()
+  id_subject!: number;
 
   @IsNumber()
   @Min(1)

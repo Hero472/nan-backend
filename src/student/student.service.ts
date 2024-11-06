@@ -69,8 +69,10 @@ export class StudentService {
     }
   }
 
-  findAll() {
-    return this.studentRepository.find();
+  async findAll() {
+    return await this.studentRepository.find({
+      select: ['id_student', 'name', 'level', 'email'],
+    });
   }
 
   async findOne(access_token: string): Promise<UserSend> {
