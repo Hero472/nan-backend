@@ -30,13 +30,15 @@ export class GradeService {
       throw new NotFoundException(`Subject with ID ${createGradeDto.id_subject} not found`);
     }
 
-    const savedGrade = this.gradeRepository.create({
+    const grade = this.gradeRepository.create({
       grade: createGradeDto.grade,
       level: createGradeDto.level,
       year: createGradeDto.year,
       student,
       subject,
     });
+
+    const savedGrade = await this.gradeRepository.save(grade);
 
     const gradeSend: GradeSend = {
       id_grade: savedGrade.id_grade,
@@ -98,7 +100,7 @@ export class GradeService {
     try {
       const grade = await this.findOne(id);
       Object.assign(grade, updateGradeDto);
-      
+
       const savedGrade = await this.gradeRepository.save(grade);
 
       const gradeSend: GradeSend = {
