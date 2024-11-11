@@ -8,7 +8,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
-import { UserSend, UserType } from '../types';
+import { GradeSend, UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
 import { Parent } from '../parent/entities/parent.entity';
 import { LevelEnum } from '../enum';
@@ -184,6 +184,32 @@ export class StudentService {
       throw new InternalServerErrorException(
         'An error occurred while resetting the password',
       );
+    }
+  }
+
+  async getGrades(id_student: number): Promise<GradeSend[]> {
+    try {
+      const student = await this.studentRepository.findOne({
+        where: { id_student },
+        relations: ['grades', 'grades.subject'],
+      });
+  
+      if (!student) {
+        throw new NotFoundException(`Student with id ${id_student} not found`);
+      }
+
+      const gradeSend: GradeSend[] = student.grades.map((grade) => ({
+        id_grade: grade.id_grade,
+        student_name: student.name,
+        subject_name: grade.subject.name,
+        grade: grade.grade,
+        level: student.level,
+        year: grade.year,
+      }));
+  
+      return gradeSend;
+    } catch (error: unknown) {
+      throw new Error('Failed to retrieve grades: ' + (error as Error).message);
     }
   }
 

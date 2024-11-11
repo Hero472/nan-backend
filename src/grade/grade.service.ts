@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateGradeDto } from './dto/create-grade.dto';
 import { UpdateGradeDto } from './dto/update-grade.dto';
 import { Grade } from './entities/grade.entity';
@@ -20,14 +24,22 @@ export class GradeService {
   ) {}
 
   async create(createGradeDto: CreateGradeDto): Promise<GradeSend> {
-    const student = await this.studentRepository.findOne({where: {id_student: createGradeDto.id_student}});
-    const subject = await this.subjectRepository.findOne({where: {id_subject: createGradeDto.id_subject}});
+    const student = await this.studentRepository.findOne({
+      where: { id_student: createGradeDto.id_student },
+    });
+    const subject = await this.subjectRepository.findOne({
+      where: { id_subject: createGradeDto.id_subject },
+    });
 
     if (!student) {
-      throw new NotFoundException(`Student with ID ${createGradeDto.id_student} not found`);
+      throw new NotFoundException(
+        `Student with ID ${createGradeDto.id_student} not found`,
+      );
     }
     if (!subject) {
-      throw new NotFoundException(`Subject with ID ${createGradeDto.id_subject} not found`);
+      throw new NotFoundException(
+        `Subject with ID ${createGradeDto.id_subject} not found`,
+      );
     }
 
     const grade = this.gradeRepository.create({
@@ -48,7 +60,7 @@ export class GradeService {
       level: savedGrade.level,
       year: savedGrade.year,
     };
-  
+
     return gradeSend;
   }
 
@@ -57,7 +69,7 @@ export class GradeService {
       const savedGrades = await this.gradeRepository.find({
         relations: ['student', 'subject'],
       });
-  
+
       const gradeSendList: GradeSend[] = savedGrades.map((grade) => ({
         id_grade: grade.id_grade,
         student_name: grade.student.name,
@@ -66,16 +78,49 @@ export class GradeService {
         level: grade.level,
         year: grade.year,
       }));
-  
+
       return gradeSendList;
     } catch (error: unknown) {
-      throw new InternalServerErrorException(`Failed to fetch grades: ${error}`);
+      throw new InternalServerErrorException(
+        `Failed to fetch grades: ${error}`,
+      );
+    }
+  }
+
+  async getStudentGrades(id_student: number): Promise<GradeSend[]> {
+    try {
+      const student = await this.studentRepository.findOne({
+        where: { id_student },
+      });
+
+      if (!student) {
+        throw new NotFoundException(`Student with ID ${id_student} not found`);
+      }
+
+      const grades = await this.gradeRepository.find({ where: { student } });
+
+      const gradeSend: GradeSend[] = grades.map((grade) => ({
+        id_grade: grade.id_grade,
+        student_name: grade.student.name,
+        subject_name: grade.subject.name,
+        grade: grade.grade,
+        level: grade.level,
+        year: grade.year,
+      }));
+
+      return gradeSend;
+    } catch (error: unknown) {
+      throw new InternalServerErrorException(
+        `Failed to fetch student grades: ${error}`,
+      );
     }
   }
 
   async findOne(id: number): Promise<GradeSend> {
     try {
-      const savedGrade = await this.gradeRepository.findOne({ where: { id_grade: id } });
+      const savedGrade = await this.gradeRepository.findOne({
+        where: { id_grade: id },
+      });
       if (!savedGrade) {
         throw new NotFoundException(`Grade with ID ${id} not found`);
       }
@@ -86,11 +131,10 @@ export class GradeService {
         subject_name: savedGrade.subject.name,
         grade: savedGrade.grade,
         level: savedGrade.level,
-        year: savedGrade.year
-      }
+        year: savedGrade.year,
+      };
 
       return gradeSend;
-
     } catch (error: unknown) {
       throw new InternalServerErrorException(`Failed to fetch grade: ${error}`);
     }
@@ -109,13 +153,14 @@ export class GradeService {
         subject_name: savedGrade.subject.name,
         grade: savedGrade.grade,
         level: savedGrade.level,
-        year: savedGrade.year
-      }
+        year: savedGrade.year,
+      };
 
       return gradeSend;
-
     } catch (error: unknown) {
-      throw new InternalServerErrorException(`Failed to update grade: ${error}`);
+      throw new InternalServerErrorException(
+        `Failed to update grade: ${error}`,
+      );
     }
   }
 
@@ -126,7 +171,9 @@ export class GradeService {
         throw new NotFoundException(`Grade with ID ${id} not found`);
       }
     } catch (error: unknown) {
-      throw new InternalServerErrorException(`Failed to delete grade: ${error}`);
+      throw new InternalServerErrorException(
+        `Failed to delete grade: ${error}`,
+      );
     }
   }
 }

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AttendanceService } from './attendance.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
+import { Attendance } from './entities/attendance.entity';
 
 @Controller('attendance')
 export class AttendanceController {
@@ -20,6 +21,11 @@ export class AttendanceController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.attendanceService.findOne(id);
+  }
+
+  @Get('student/:id')
+  async getAttendanceStudent(@Param('id') id: number): Promise<Attendance[]> {
+    return this.attendanceService.getAttendanceStudent(id);
   }
 
   @Patch(':id')

@@ -5,7 +5,7 @@ import { Subject } from './entities/subject.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Professor } from '../professor/entities/professor.entity';
-import { StudentSubjectSend, SubjectSend } from '../types';
+import { StudentSubjectSendIdStudent, StudentSubjectSendIdSubject, SubjectSend } from '../types';
 import { Student } from 'src/student/entities/student.entity';
 
 @Injectable()
@@ -86,9 +86,9 @@ export class SubjectService {
     return subjectSend;
   }
 
-  async getStudentSubject(
+  async getStudentSubjectIdSubject(
     id_subject: number,
-  ): Promise<StudentSubjectSend[]> {
+  ): Promise<StudentSubjectSendIdSubject[]> {
 
     const subject = await this.subjectRepository.findOne({
       where: { id_subject },
@@ -110,11 +110,42 @@ export class SubjectService {
       );
     }
 
-    const result: StudentSubjectSend[] = students.map((student) => ({
+    const result: StudentSubjectSendIdSubject[] = students.map((student) => ({
       id_student: student.id_student,
       name: student.name,
     }));
 
+    return result;
+  }
+
+  async getStudentSubjectIdStudent(
+    id_student: number,
+  ): Promise<StudentSubjectSendIdStudent[]> {
+    const student = await this.studentRepository.findOne({
+      where: { id_student },
+    });
+  
+    if (!student) {
+      throw new NotFoundException(`Student with id ${id_student} not found`);
+    }
+  
+    const subjects = await this.subjectRepository
+      .createQueryBuilder('subject')
+      .where('subject.level = :level', { level: student.level })
+      .select(['subject.id_subject', 'subject.name'])
+      .getMany();
+  
+    if (!subjects.length) {
+      throw new NotFoundException(
+        `No subjects found for student with id ${id_student} at level ${student.level}`,
+      );
+    }
+  
+    const result: StudentSubjectSendIdStudent[] = subjects.map((subject) => ({
+      id_subject: subject.id_subject,
+      name: subject.name,
+    }));
+  
     return result;
   }
 

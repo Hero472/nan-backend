@@ -9,14 +9,6 @@ export class Grade {
   @PrimaryGeneratedColumn()
   id_grade!: number;
 
-  @ManyToOne(() => Student, (student) => student.grades)
-  @JoinColumn({ name: 'id_student' })
-  student!: Student;
-
-  @ManyToOne(() => Subject, (subject) => subject.grades)
-  @JoinColumn({ name: 'id_subject' })
-  subject!: Subject;
-
   @Column({ type: 'float' })
   @Min(1)
   @Max(7)
@@ -30,4 +22,12 @@ export class Grade {
   @Min(2000)
   @Max(3000)
   year!: number;
+
+  @ManyToOne(() => Student, (student) => student.grades)
+  @JoinColumn({ name: 'id_student' })
+  student!: Student;
+
+  @ManyToOne(() => Subject, (subject) => subject.grades)
+  @JoinColumn({ name: 'id_subject' })
+  subject!: Subject;
 }

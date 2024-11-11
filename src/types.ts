@@ -21,8 +21,13 @@ export type StudentSend = {
   refresh_token: string;
 };
 
-export type StudentSubjectSend = {
+export type StudentSubjectSendIdSubject = {
   id_student: number,
+  name: string,
+}
+
+export type StudentSubjectSendIdStudent = {
+  id_subject: number,
   name: string,
 }
 

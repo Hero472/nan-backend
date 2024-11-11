@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
 import { Attendance } from './entities/attendance.entity';
@@ -32,6 +32,22 @@ export class AttendanceService {
       throw new NotFoundException(`Attendance record with id ${id} not found`);
     }
     return attendance;
+  }
+
+  async getAttendanceStudent(id: number): Promise<Attendance[]> {
+    try {
+
+      const attendanceRecords = await this.attendanceModel.find({ students: id }).exec();
+
+      if (attendanceRecords.length === 0) {
+        throw new NotFoundException(`No attendance records found for student with ID ${id}`);
+      }
+
+      return attendanceRecords;
+
+    } catch (error: unknown) {
+      throw new InternalServerErrorException(`Failed to fetch attendance for student: ${error}`);
+    }
   }
 
   async update(id: string, updateAttendanceDto: UpdateAttendanceDto): Promise<Attendance> {

@@ -36,8 +36,13 @@ export class SubjectController {
   }
 
   @Get('/students/:id')
-  getStudentSubject(@Param('id') id: string) {
-    return this.subjectService.getStudentSubject(+id);
+  getStudentSubjectIdSubject(@Param('id') id: string) {
+    return this.subjectService.getStudentSubjectIdSubject(+id);
+  }
+
+  @Get('/subjects/:id')
+  getStudentSubjectIdStudent(@Param('id') id: string) {
+    return this.subjectService.getStudentSubjectIdStudent(+id);
   }
 
   @Delete(':id')

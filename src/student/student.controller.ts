@@ -10,7 +10,8 @@ import {
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { LevelEnum } from 'src/enum';
+import { LevelEnum } from '../enum';
+import { GradeSend } from '../types';
 
 @Controller('student')
 export class StudentController {
@@ -51,6 +52,11 @@ export class StudentController {
     @Body('newPassword') newPassword: string,
   ) {
     return this.studentService.resetPassword(email, code, newPassword);
+  }
+
+  @Get(':id_student/grades')
+  async getGrades(@Param('id_student') id_student: number): Promise<GradeSend[]> {
+    return await this.studentService.getGrades(id_student);
   }
 
   @Patch(':id')
