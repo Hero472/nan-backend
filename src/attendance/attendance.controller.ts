@@ -28,6 +28,21 @@ export class AttendanceController {
     return this.attendanceService.getAttendanceStudent(id);
   }
 
+  @Get('subject/:id_subject/percentage')
+  async getAttendancePercentageForSubject(
+    @Param('id_subject') id_subject: number,
+  ): Promise<number> {
+    return this.attendanceService.getAttendancePercentageForSubject(id_subject);
+  }
+
+  @Get('subject/:id_subject/student/:id_student/percentage')
+  async getAttendanceForStudentInSubject(
+    @Param('id_subject') id_subject: number,
+    @Param('id_student') id_student: number,
+  ): Promise<number> {
+    return this.attendanceService.getAttendanceForStudentInSubject(id_subject, id_student);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAttendanceDto: UpdateAttendanceDto) {
     return this.attendanceService.update(id, updateAttendanceDto);

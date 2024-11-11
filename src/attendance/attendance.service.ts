@@ -50,6 +50,55 @@ export class AttendanceService {
     }
   }
 
+  async getAttendancePercentageForSubject(id_subject: number): Promise<number> {
+    const attendanceRecords = await this.attendanceModel.find({ id_subject }).exec();
+
+    if (attendanceRecords.length === 0) {
+      return 0;
+    }
+
+    const totalSessions = attendanceRecords.length;
+
+    let totalAttendanceCount = 0;
+    attendanceRecords.forEach((record) => {
+      totalAttendanceCount += record.students.length;
+    });
+
+    // Calculate the total number of students who could have attended (total students × total sessions)
+    const totalStudents = new Set(attendanceRecords.flatMap(record => record.students)).size;
+    const totalPossibleAttendance = totalStudents * totalSessions;
+
+    // Calculate the attendance percentage
+    const attendancePercentage = (totalAttendanceCount / totalPossibleAttendance) * 100;
+
+    return attendancePercentage;
+  }
+
+  async getAttendanceForStudentInSubject(id_subject: number, id_student: number): Promise<number> {
+    // Fetch all attendance records for the given subject
+    const attendanceRecords = await this.attendanceModel.find({ id_subject }).exec();
+
+    if (attendanceRecords.length === 0) {
+      return 0;
+    }
+
+    // Calculate the total sessions attended by the student
+    let totalAttendanceCount = 0;
+    attendanceRecords.forEach((record) => {
+      if (record.students.includes(id_student)) {
+        totalAttendanceCount += 1;
+      }
+    });
+
+    // Calculate the total number of sessions
+    const totalSessions = attendanceRecords.length;
+
+    // Calculate the attendance percentage
+    const attendancePercentage = (totalAttendanceCount / totalSessions) * 100;
+
+    return attendancePercentage;
+  }
+
   async update(id: string, updateAttendanceDto: UpdateAttendanceDto): Promise<Attendance> {
     const attendance = await this.attendanceModel.findByIdAndUpdate(
       id,
