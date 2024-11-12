@@ -110,7 +110,7 @@ export class StudentService {
     }
   }
 
-  async initiatePasswordRecovery(email: string): Promise<{message: string}> {
+  async initiatePasswordRecovery(email: string): Promise<{ message: string }> {
     try {
       const student = await this.studentRepository.findOne({
         where: { email },
@@ -142,25 +142,40 @@ export class StudentService {
     }
   }
 
-  async verifyRecoveryCode(email: string, code: string): Promise<{message: string}> {
+  async verifyRecoveryCode(
+    email: string,
+    code: string,
+  ): Promise<{ message: string }> {
     const student = await this.studentRepository.findOne({
       where: { email, recovery_code: code },
     });
 
-    if (!student || !student.recovery_code_expires_at || student.recovery_code_expires_at < new Date()) {
+    if (
+      !student ||
+      !student.recovery_code_expires_at ||
+      student.recovery_code_expires_at < new Date()
+    ) {
       throw new BadRequestException('Invalid or expired recovery code');
     }
 
     return { message: 'Code verified, proceed to reset password' };
   }
 
-  async resetPassword(email: string, code: string, newPassword: string): Promise<{message: string}> {
+  async resetPassword(
+    email: string,
+    code: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
     try {
       const student = await this.studentRepository.findOne({
         where: { email, recovery_code: code },
       });
 
-      if (!student || !student.recovery_code_expires_at || student.recovery_code_expires_at < new Date()) {
+      if (
+        !student ||
+        !student.recovery_code_expires_at ||
+        student.recovery_code_expires_at < new Date()
+      ) {
         throw new BadRequestException('Invalid or expired recovery code');
       }
 
@@ -193,7 +208,7 @@ export class StudentService {
         where: { id_student },
         relations: ['grades', 'grades.subject'],
       });
-  
+
       if (!student) {
         throw new NotFoundException(`Student with id ${id_student} not found`);
       }
@@ -206,17 +221,55 @@ export class StudentService {
         level: student.level,
         year: grade.year,
       }));
-  
+
       return gradeSend;
     } catch (error: unknown) {
       throw new Error('Failed to retrieve grades: ' + (error as Error).message);
     }
   }
 
+  async getGradesSubject(
+    id_student: number,
+    id_subject: number,
+  ): Promise<GradeSend[]> {
+    try {
+      const student = await this.studentRepository.findOne({
+        where: { id_student },
+        relations: ['grades', 'grades.subject'],
+      });
+
+      if (!student) {
+        throw new NotFoundException(`Student with id ${id_student} not found`);
+      }
+
+      const filteredGrades = student.grades.filter(
+        (grade) => grade.subject.id_subject === id_subject,
+      );
+
+      if (filteredGrades.length === 0) {
+        throw new NotFoundException(
+          `No grades found for student with id ${id_student} in subject with id ${id_subject}`,
+        );
+      }
+
+      const gradeSend: GradeSend[] = filteredGrades.map((grade) => ({
+        id_grade: grade.id_grade,
+        student_name: student.name,
+        subject_name: grade.subject.name,
+        grade: grade.grade,
+        level: student.level,
+        year: grade.year,
+      }));
+
+      return gradeSend;
+    } catch (error: unknown) {
+      throw new Error('Failed to retrieve grades: ' + (error as Error).message);
+    }
+  }
   async update(
     id: number,
     updateStudentDto: UpdateStudentDto,
-    level: LevelEnum
+    level: LevelEnum,
   ): Promise<UserSend> {
     try {
       const student = await this.studentRepository.findOne({
@@ -253,7 +306,7 @@ export class StudentService {
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
-        user_type: UserType.Student
+        user_type: UserType.Student,
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
@@ -268,8 +321,9 @@ export class StudentService {
 
   async remove(id: number): Promise<UserSend> {
     try {
-
-      const student: Student | null = await this.studentRepository.findOne({ where: { id_student: id } });
+      const student: Student | null = await this.studentRepository.findOne({
+        where: { id_student: id },
+      });
 
       if (!student) {
         throw new NotFoundException(`Student not found`);
@@ -282,14 +336,16 @@ export class StudentService {
         name: student.name,
         access_token: student.access_token,
         refresh_token: student.refresh_token,
-        user_type: UserType.Student
+        user_type: UserType.Student,
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException;
+        throw new NotFoundException();
       }
 
-      throw new InternalServerErrorException('An error occurred while removing the student');
+      throw new InternalServerErrorException(
+        'An error occurred while removing the student',
+      );
     }
   }
 }

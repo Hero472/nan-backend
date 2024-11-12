@@ -55,8 +55,18 @@ export class StudentController {
   }
 
   @Get(':id_student/grades')
-  async getGrades(@Param('id_student') id_student: number): Promise<GradeSend[]> {
+  async getGrades(
+    @Param('id_student') id_student: number,
+  ): Promise<GradeSend[]> {
     return await this.studentService.getGrades(id_student);
+  }
+
+  @Get(':id_student/grades/:id_subject')
+  async getGradesSubject(
+    @Param('id_student') id_student: number,
+    @Param('id_subject') id_subject: number,
+  ): Promise<GradeSend[]> {
+    return await this.studentService.getGradesSubject(id_student, id_subject);
   }
 
   @Patch(':id')
