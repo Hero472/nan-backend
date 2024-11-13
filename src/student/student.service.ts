@@ -243,7 +243,9 @@ export class StudentService {
       }
 
       const filteredGrades = student.grades.filter(
-        (grade) => grade.subject.id_subject === id_subject,
+        (grade) => {
+          return grade.subject.id_subject == id_subject
+        }
       );
 
       if (filteredGrades.length === 0) {

@@ -169,6 +169,7 @@ export class ParentService {
       }
 
       const result: StudentSendFromParent[] = parent.students.map(student => ({
+        id: student.id_student,
         name: student.name,
         level: student.level,
       }));
