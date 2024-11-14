@@ -27,6 +27,8 @@ import { AttendanceController } from './attendance/attendance.controller';
 import { Subject } from './subject/entities/subject.entity';
 import { GradeController } from './grade/grade.controller';
 import { Grade } from './grade/entities/grade.entity';
+import { ChatModule } from './chat/chat.module';  // Importa ChatModule
+import { ChatMessage } from './chat/entities/chat-message.entity';  // Importa ChatMessage
 
 @Module({
   imports: [
@@ -80,7 +82,7 @@ import { Grade } from './grade/entities/grade.entity';
           password,
           username,
           database,
-          entities: [Professor, Student, Subject, Parent, Grade],
+          entities: [Professor, Student, Subject, Parent, Grade, ChatMessage],  // Incluye ChatMessage
           synchronize,
           logging,
           ssl: {
@@ -90,9 +92,18 @@ import { Grade } from './grade/entities/grade.entity';
       },
     }),
     MailModule,
-    AuthModule
+    ChatModule,  // Agrega ChatModule
   ],
-  controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController, GradeController],
+  controllers: [
+    AttendanceController, 
+    AppController, 
+    ProfessorController, 
+    StudentController, 
+    SubjectController, 
+    ParentController, 
+    AuthController, 
+    GradeController
+  ],
   providers: [AppService],
 })
 export class AppModule {}
