@@ -27,9 +27,11 @@ import { AttendanceController } from './attendance/attendance.controller';
 import { Subject } from './subject/entities/subject.entity';
 import { GradeController } from './grade/grade.controller';
 import { Grade } from './grade/entities/grade.entity';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
+    ChatModule,
     AuthModule,
     ParentModule,
     StudentModule,
