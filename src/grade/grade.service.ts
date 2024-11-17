@@ -142,11 +142,19 @@ export class GradeService {
 
   async update(id: number, updateGradeDto: UpdateGradeDto): Promise<GradeSend> {
     try {
-      const grade = await this.findOne(id);
+      const grade = await this.gradeRepository.findOne({
+        where: { id_grade: id },
+        relations: ['student', 'subject'],
+      });
+  
+      if (!grade) {
+        throw new NotFoundException(`Grade with ID ${id} not found`);
+      }
+  
       Object.assign(grade, updateGradeDto);
-
+  
       const savedGrade = await this.gradeRepository.save(grade);
-
+  
       const gradeSend: GradeSend = {
         id_grade: savedGrade.id_grade,
         student_name: savedGrade.student.name,
@@ -155,14 +163,15 @@ export class GradeService {
         level: savedGrade.level,
         year: savedGrade.year,
       };
-
+  
       return gradeSend;
     } catch (error: unknown) {
-      throw new InternalServerErrorException(
-        `Failed to update grade: ${error}`,
-      );
+      throw new InternalServerErrorException(`
+        Failed to update grade: ${error instanceof Error ? error.message : error},
+      `);
     }
   }
+
 
   async remove(id: number): Promise<void> {
     try {

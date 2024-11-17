@@ -144,7 +144,7 @@ export class ParentService {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     parent.password = Buffer.from(hashedPassword);
-    parent.recovery_code = null; // Clear recovery code after successful reset
+    parent.recovery_code = null;
     parent.recovery_code_expires_at = null;
 
     await this.parentRepository.save(parent);

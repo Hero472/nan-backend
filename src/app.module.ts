@@ -27,6 +27,7 @@ import { AttendanceController } from './attendance/attendance.controller';
 import { Subject } from './subject/entities/subject.entity';
 import { GradeController } from './grade/grade.controller';
 import { Grade } from './grade/entities/grade.entity';
+import { TransbankModule } from './transbank/transbank.module';
 
 @Module({
   imports: [
@@ -90,7 +91,8 @@ import { Grade } from './grade/entities/grade.entity';
       },
     }),
     MailModule,
-    AuthModule
+    AuthModule,
+    TransbankModule
   ],
   controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController, GradeController],
   providers: [AppService],
