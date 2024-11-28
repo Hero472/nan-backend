@@ -29,6 +29,7 @@ import { GradeController } from './grade/grade.controller';
 import { Grade } from './grade/entities/grade.entity';
 import { TransbankModule } from './transbank/transbank.module';
 import { ChatModule } from './chat/chat.module';
+import { CalendarModule } from './calendar/calendar.module';
 
 @Module({
   imports: [
@@ -94,7 +95,8 @@ import { ChatModule } from './chat/chat.module';
     MailModule,
     AuthModule,
     TransbankModule,
-    ChatModule
+    ChatModule,
+    CalendarModule
   ],
   controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController, GradeController],
   providers: [AppService],
