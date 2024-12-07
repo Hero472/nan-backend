@@ -19,11 +19,11 @@ export class CalendarController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCalendarDto: UpdateCalendarDto) {
-    return this.calendarService.update(+id, updateCalendarDto);
+    return this.calendarService.update(id, updateCalendarDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.calendarService.remove(+id);
+    return this.calendarService.remove(id);
   }
 }

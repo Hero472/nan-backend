@@ -1,11 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 @Schema({ collection: 'calendar' })
 export class Calendar extends Document {
-    @Prop({ type: Types.ObjectId })
-    _id!: Types.ObjectId;
-
     @Prop({ required: true })
     title!: string;
 

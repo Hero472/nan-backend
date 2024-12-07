@@ -13,10 +13,13 @@ export class CalendarService {
 
   async create(createCalendarDto: CreateCalendarDto): Promise<Calendar> {
     
+    const start = new Date(createCalendarDto.start);
+    const end = new Date(createCalendarDto.start);
+
     const calendar = new this.calendarModel({
       title: createCalendarDto.title,
-      start: createCalendarDto.start,
-      end: createCalendarDto.end,
+      start: start,
+      end: end,
       description: createCalendarDto.description
     })
 
@@ -27,7 +30,7 @@ export class CalendarService {
     return this.calendarModel.find().exec()
   }
 
-  async update(id: number, updateCalendarDto: UpdateCalendarDto): Promise<Calendar> {
+  async update(id: string, updateCalendarDto: UpdateCalendarDto): Promise<Calendar> {
     const calendar = await this.calendarModel.findByIdAndUpdate(
       id,
       updateCalendarDto,
@@ -41,7 +44,7 @@ export class CalendarService {
     return calendar
   }
 
-  async remove(id: number): Promise<Calendar> {
+  async remove(id: string): Promise<Calendar> {
     const calendar = await this.calendarModel.findByIdAndDelete(id).exec();
     if (!calendar) {
       throw new NotFoundException(`Calendar record with id ${id} not found`);
