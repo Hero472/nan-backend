@@ -54,7 +54,9 @@ export class SubjectService {
   }
 
   async findAll(): Promise<SubjectSend[]> {
-    const subjects: Subject[] = await this.subjectRepository.find();
+    const subjects: Subject[] = await this.subjectRepository.find({
+      relations: ['professor'],
+    });
 
     const subjectSends: SubjectSend[] = subjects.map((subject) => ({
       id_subject: subject.id_subject,
@@ -62,6 +64,10 @@ export class SubjectService {
       level: subject.level,
       day: subject.day,
       block: subject.block,
+      professor:{
+        id: subject.professor.id_professor,
+        name: subject.professor.name,
+      }
     }));
 
     return subjectSends;

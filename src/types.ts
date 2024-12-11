@@ -19,6 +19,8 @@ export type StudentSend = {
   name: string;
   access_token: string;
   refresh_token: string;
+  level: LevelEnum;
+  email: string;
 };
 
 export type StudentSubjectSendIdSubject = {

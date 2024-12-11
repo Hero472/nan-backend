@@ -37,16 +37,18 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('getMessages')
-  async getMessages(@MessageBody() data: { room: string }) {
-    const messages = await this.chatService.getMessages(data.room);
-    console.log(messages);
+  async getMessages(@MessageBody() data: { room: string }, @ConnectedSocket() client: Socket) {
+    let messages = await this.chatService.getMessages(data.room);
+    messages = messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    client.emit('receiveMessages', messages);
     return messages;
   }
 
   @SubscribeMessage('getAllRooms')
-  async getAllRooms() {
+  async getAllRooms( @ConnectedSocket() client: Socket) {
     const rooms = await this.chatService.getAllRooms();
     console.log(rooms);
+    client.emit('allRooms', rooms);
     return rooms; // Send back the list of rooms to the client
   }
 

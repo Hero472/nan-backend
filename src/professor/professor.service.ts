@@ -80,7 +80,7 @@ export class ProfessorService {
 
   async findOne(access_token: string): Promise<UserSend> {
     try {
-      const decodedToken = this.jwtService.verify(access_token);
+      const decodedToken = this.jwtService.verify(access_token, { secret: process.env.JWT_SECRET });
       const professorId = decodedToken.sub;
       const professorEmail = decodedToken.email;
       const professor = await this.professorRepository.findOne({

@@ -27,7 +27,7 @@ export class StudentController {
     return this.studentService.findAll();
   }
 
-  @Get(':id')
+  @Get(':access_token')
   findOne(@Param('access_token') access_token: string) {
     return this.studentService.findOne(access_token);
   }

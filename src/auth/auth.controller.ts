@@ -18,10 +18,11 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() loginDto: { email: string; password: string; userType: UserType },
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string; id: number }> {
     const { email, password, userType } = loginDto;
     let bool: boolean;
     let user: Student | Parent | Professor | null = null;
+    let id = 0;
 
     switch (userType) {
       case UserType.Student:
@@ -29,18 +30,21 @@ export class AuthController {
           email,
           password,
         }));
+        id = (user as Student).id_student;
         break;
       case UserType.Parent:
         ({ bool, parent: user } = await this.authService.loginParent({
           email,
           password,
         }));
+        id = (user as Parent).id_parent;
         break;
       case UserType.Professor:
         ({ bool, professor: user } = await this.authService.loginProfessor({
           email,
           password,
         }));
+        id = (user as Professor).id_professor;
         break;
       default:
         throw new BadRequestException('Invalid user type');
@@ -95,7 +99,7 @@ export class AuthController {
         break;
     }
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, id };
   }
 
   @Post('refresh')

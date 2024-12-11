@@ -30,6 +30,8 @@ import { Grade } from './grade/entities/grade.entity';
 import { TransbankModule } from './transbank/transbank.module';
 import { ChatModule } from './chat/chat.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { NotificacionModule } from './notifications/notification.module';
+import { NotificacionController } from './notifications/notification.controller';
 
 @Module({
   imports: [
@@ -96,9 +98,10 @@ import { CalendarModule } from './calendar/calendar.module';
     AuthModule,
     TransbankModule,
     ChatModule,
-    CalendarModule
+    CalendarModule,
+    NotificacionModule,
   ],
-  controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController, GradeController],
+  controllers: [AttendanceController, AppController, ProfessorController, StudentController, SubjectController, ParentController, AuthController, GradeController,NotificacionController],
   providers: [AppService],
 })
 export class AppModule {}

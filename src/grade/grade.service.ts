@@ -68,6 +68,7 @@ export class GradeService {
     try {
       const savedGrades = await this.gradeRepository.find({
         relations: ['student', 'subject'],
+        // relations: ['student', 'subject','student.parent'],
       });
 
       const gradeSendList: GradeSend[] = savedGrades.map((grade) => ({
@@ -77,6 +78,7 @@ export class GradeService {
         grade: grade.grade,
         level: grade.level,
         year: grade.year,
+        student_id : grade.student.id_student,
       }));
 
       return gradeSendList;

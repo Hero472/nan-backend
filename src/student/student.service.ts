@@ -8,7 +8,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
-import { GradeSend, UserSend, UserType } from '../types';
+import { GradeSend, StudentSend, UserSend, UserType } from '../types';
 import * as bcrypt from 'bcrypt';
 import { Parent } from '../parent/entities/parent.entity';
 import { LevelEnum } from '../enum';
@@ -57,6 +57,7 @@ export class StudentService {
         access_token: result.access_token,
         refresh_token: result.refresh_token,
         user_type: UserType.Student,
+
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
@@ -72,10 +73,11 @@ export class StudentService {
   async findAll() {
     return await this.studentRepository.find({
       select: ['id_student', 'name', 'level', 'email'],
+      relations: ['parent'],
     });
   }
 
-  async findOne(access_token: string): Promise<UserSend> {
+  async findOne(access_token: string): Promise<UserSend|StudentSend> {
     const decodedToken = this.jwtService.verify(access_token);
     const studentId = decodedToken.sub;
     const studentEmail = decodedToken.email;
@@ -98,6 +100,8 @@ export class StudentService {
         access_token: student.access_token,
         refresh_token: student.refresh_token,
         user_type: UserType.Student,
+        level: student.level,
+        email: student.email,
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {
