@@ -248,12 +248,6 @@ export class StudentService {
         }
       );
 
-      if (filteredGrades.length === 0) {
-        throw new NotFoundException(
-          `No grades found for student with id ${id_student} in subject with id ${id_subject}`,
-        );
-      }
-
       const gradeSend: GradeSend[] = filteredGrades.map((grade) => ({
         id_grade: grade.id_grade,
         student_name: student.name,
