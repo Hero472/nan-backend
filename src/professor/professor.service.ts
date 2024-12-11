@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailService } from '../mail/mail.service';
 import { SubjectProfSend, UserSend, UserType } from '../types';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import { UpdateProfessorDto } from './dto/update-professor.dto';
 import { JwtService } from '@nestjs/jwt';
 
@@ -26,7 +26,7 @@ export class ProfessorService {
   async create(createProfessorDto: CreateProfessorDto): Promise<UserSend> {
     const { name, email, password } = createProfessorDto;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     const professor = this.professorRepository.create({
       name,
@@ -152,7 +152,7 @@ export class ProfessorService {
       throw new BadRequestException('Invalid or expired recovery code');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
     professor.password = Buffer.from(hashedPassword);
     professor.recovery_code = null;
     professor.recovery_code_expires_at = null;
@@ -186,7 +186,7 @@ export class ProfessorService {
       }
 
       if (password) {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcryptjs.hash(password, 10);
         professor.password = Buffer.from(hashedPassword);
       }
 

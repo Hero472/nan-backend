@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { GradeSend, UserSend, UserType } from '../types';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import { Parent } from '../parent/entities/parent.entity';
 import { LevelEnum } from '../enum';
 import { MailService } from '../mail/mail.service';
@@ -30,7 +30,7 @@ export class StudentService {
   async create(createStudentDto: CreateStudentDto): Promise<UserSend> {
     const { name, email, password, id_parent } = createStudentDto;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     try {
       const parent = await this.parentRepository.findOne({
@@ -179,7 +179,7 @@ export class StudentService {
         throw new BadRequestException('Invalid or expired recovery code');
       }
 
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const hashedPassword = await bcryptjs.hash(newPassword, 10);
       student.password = Buffer.from(hashedPassword);
       student.recovery_code = null;
       student.recovery_code_expires_at = null;
@@ -287,7 +287,7 @@ export class StudentService {
       }
 
       if (password) {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcryptjs.hash(password, 10);
         student.password = Buffer.from(hashedPassword);
       }
 
