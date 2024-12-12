@@ -4,11 +4,16 @@ import { UpdateAttendanceDto } from './dto/update-attendance.dto';
 import { Attendance } from './entities/attendance.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { NotificationService } from 'src/notifications/notification.service';
+import { SubjectService } from 'src/subject/subject.service';
 
 @Injectable()
 export class AttendanceService {
   constructor(
     @InjectModel(Attendance.name) private readonly attendanceModel: Model<Attendance>,
+    private readonly notificationService: NotificationService,
+    private readonly subjectService: SubjectService,
+
   ) {}
 
   async create(createAttendanceDto: CreateAttendanceDto): Promise<Attendance> {
@@ -18,6 +23,25 @@ export class AttendanceService {
       level: createAttendanceDto.level,
       students: createAttendanceDto.studentIds,
     });
+
+    const students = await this.subjectService.getStudentSubjectIdSubject(attendance.id_subject);
+    console.log("estudiantes",students);
+    const notPresentStudents = students.filter(student => !attendance.students.includes(student.id_student));
+    console.log("no presentes",notPresentStudents);
+
+    const formattedDate = new Date(attendance.date).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    await this.notificationService.enviarNotificacionGlobal(
+      'Nueva Asistencia',
+      `Nueva asistencia para la materia ${attendance.id_subject} el día ${formattedDate}.`,
+    );
+
+    const notPresentStudentIds = notPresentStudents.map(student => student.id_student.toString());
+    await this.notificationService.sendNotification('inasisitencia', 'Usted no asistió a la clase', notPresentStudentIds);
 
     return attendance.save();
   }
