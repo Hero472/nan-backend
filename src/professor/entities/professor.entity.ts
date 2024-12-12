@@ -12,6 +12,9 @@ export class Professor {
   @Column({ type: 'text', unique: true })
   email!: string;
 
+  @Column({ type: 'text' })
+  notification_id!: string;
+
   @Column({ type: 'bytea' })
   password!: Buffer;
 

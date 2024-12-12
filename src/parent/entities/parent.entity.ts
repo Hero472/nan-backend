@@ -15,6 +15,9 @@ export class Parent {
   @Column({ type: 'bytea' })
   password!: Buffer;
 
+  @Column({ type: 'text' })
+  notification_id!: string;
+
   @Column({ type: 'text', nullable: true })
   recovery_code: string | null = null;
 

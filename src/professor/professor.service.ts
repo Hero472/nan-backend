@@ -175,7 +175,7 @@ export class ProfessorService {
         throw new NotFoundException(`professor with ID ${id} not found`);
       }
 
-      const { name, email, password } = updateProfessorDto;
+      const { name, email, password, notification_id } = updateProfessorDto;
 
       if (name) {
         professor.name = name;
@@ -188,6 +188,10 @@ export class ProfessorService {
       if (password) {
         const hashedPassword = await bcrypt.hash(password, 10);
         professor.password = Buffer.from(hashedPassword);
+      }
+
+      if (notification_id) {
+        professor.notification_id = notification_id;
       }
 
       const result = await this.professorRepository.save(professor);

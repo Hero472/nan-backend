@@ -11,4 +11,7 @@ export class CreateProfessorDto {
 
   @IsNotEmpty()
   password!: string;
+
+  @IsString()
+  notification_id?: string;
 }

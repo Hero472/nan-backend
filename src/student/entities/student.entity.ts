@@ -13,6 +13,9 @@ export class Student {
   @Column({ type: 'text' })
   name!: string;
 
+  @Column({ type: 'text' })
+  notification_id!: string;
+
   @IsNotEmpty()
   @Column({ type: 'enum', enum: LevelEnum })
   level!: LevelEnum;

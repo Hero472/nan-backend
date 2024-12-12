@@ -286,7 +286,7 @@ export class StudentService {
         throw new NotFoundException(`Student with ID ${id} not found`);
       }
 
-      const { name, email, password } = updateStudentDto;
+      const { name, email, password, notification_id } = updateStudentDto;
 
       if (name) {
         student.name = name;
@@ -303,6 +303,10 @@ export class StudentService {
 
       if (level) {
         student.level = level;
+      }
+
+      if (notification_id) {
+        student.notification_id = notification_id;
       }
 
       const result = await this.studentRepository.save(student);

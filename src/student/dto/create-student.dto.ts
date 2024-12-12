@@ -5,6 +5,9 @@ export class CreateStudentDto {
     @IsString()
     name!: string;
 
+    @IsString()
+    notification_id?: string;
+    
     @IsEmail()
     @IsNotEmpty()
     email!: string;

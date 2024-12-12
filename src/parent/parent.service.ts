@@ -194,7 +194,7 @@ export class ParentService {
         throw new NotFoundException(`parent with ID ${id} not found`);
       }
 
-      const { name, email, password } = updateParentDto;
+      const { name, email, password, notification_id } = updateParentDto;
 
       if (name) {
         parent.name = name;
@@ -207,6 +207,10 @@ export class ParentService {
       if (password) {
         const hashedPassword = await bcrypt.hash(password, 10);
         parent.password = Buffer.from(hashedPassword);
+      }
+
+      if(notification_id) {
+        parent.notification_id = notification_id;
       }
 
       const result = await this.parentRepository.save(parent);
