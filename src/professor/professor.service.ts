@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailService } from '../mail/mail.service';
 import { SubjectProfSend, UserSend, UserType } from '../types';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import { UpdateProfessorDto } from './dto/update-professor.dto';
 import { JwtService } from '@nestjs/jwt';
 
@@ -26,7 +26,7 @@ export class ProfessorService {
   async create(createProfessorDto: CreateProfessorDto): Promise<UserSend> {
     const { name, email, password } = createProfessorDto;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     const professor = this.professorRepository.create({
       name,
@@ -152,7 +152,7 @@ export class ProfessorService {
       throw new BadRequestException('Invalid or expired recovery code');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
     professor.password = Buffer.from(hashedPassword);
     professor.recovery_code = null;
     professor.recovery_code_expires_at = null;
@@ -185,13 +185,13 @@ export class ProfessorService {
         professor.email = email;
       }
 
-      if (password) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        professor.password = Buffer.from(hashedPassword);
-      }
-
       if (notification_id) {
         professor.notification_id = notification_id;
+      }
+
+      if (password) {
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        professor.password = Buffer.from(hashedPassword);
       }
 
       const result = await this.professorRepository.save(professor);
@@ -201,7 +201,8 @@ export class ProfessorService {
         name: result.name,
         access_token: result.access_token,
         refresh_token: result.refresh_token,
-        user_type: UserType.Professor
+        user_type: UserType.Professor,
+        notification_id: result.notification_id,
       };
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {

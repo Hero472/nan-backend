@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Message } from './entities/chat.entity';
 import { Model } from 'mongoose';
+import { NotificationService } from 'src/notifications/notification.service';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectModel('Message') private readonly messageModel: Model<Message>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async createMessage(
@@ -23,6 +25,11 @@ export class ChatService {
     }
 
     const newMessage = new this.messageModel({ content, sender, room });
+
+    await this.notificationService.enviarNotificacionGlobal(
+      'Nuevo Mensaje',
+      newMessage.content,
+    );
     return newMessage.save();
   }
 

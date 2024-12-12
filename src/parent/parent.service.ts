@@ -10,7 +10,7 @@ import { Parent } from './entities/parent.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StudentSendFromParent, UserSend, UserType } from '../types';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { MailService } from '../mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 

@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
 import { Repository } from 'typeorm';
 import { GradeSend, StudentSend, UserSend, UserType } from '../types';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Parent } from '../parent/entities/parent.entity';
 import { LevelEnum } from '../enum';
 import { MailService } from '../mail/mail.service';

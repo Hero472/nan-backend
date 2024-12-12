@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from '../student/entities/student.entity';
 import { Subject } from '../subject/entities/subject.entity';
 import { GradeSend } from '../types';
+import { NotificationService } from 'src/notifications/notification.service';
 
 @Injectable()
 export class GradeService {
@@ -21,11 +22,13 @@ export class GradeService {
     private readonly studentRepository: Repository<Student>,
     @InjectRepository(Subject)
     private readonly subjectRepository: Repository<Subject>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async create(createGradeDto: CreateGradeDto): Promise<GradeSend> {
     const student = await this.studentRepository.findOne({
       where: { id_student: createGradeDto.id_student },
+      relations: ['parent'],
     });
     const subject = await this.subjectRepository.findOne({
       where: { id_subject: createGradeDto.id_subject },
@@ -60,6 +63,22 @@ export class GradeService {
       level: savedGrade.level,
       year: savedGrade.year,
     };
+
+    if (student.parent) {
+      let message: string;
+      if (savedGrade.grade < 4) {
+        message = `Se ha registrado una nota menor a 4 para ${student.name} en ${subject.name}: ${savedGrade.grade}`;
+      } else if (savedGrade.grade >= 4 && savedGrade.grade < 7) {
+        message = `Se ha registrado una nueva nota para ${student.name} en ${subject.name}: ${savedGrade.grade}. Felicitaciones!`;
+      } else {
+        message = `Se ha registrado una nota sobresaliente para ${student.name} en ${subject.name}: ${savedGrade.grade}. Felicitaciones!`;
+      }
+
+      await this.notificationService.enviarNotificacionGlobal(
+        'Nueva nota registrada',
+        message,
+      );
+    }
 
     return gradeSend;
   }

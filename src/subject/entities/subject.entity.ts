@@ -11,9 +11,6 @@ export class Subject {
   @Column({ type: 'text' })
   name!: string;
 
-  @Column({ type: 'text' })
-  notification_id!: string;
-
   @Column({ type: 'enum', enum: LevelEnum })
   level!: LevelEnum;
 

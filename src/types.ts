@@ -6,6 +6,7 @@ export type UserSend = {
   access_token: string | null;
   refresh_token: string | null;
   user_type: UserType;
+  notification_id ?: string;
 };
 
 export enum UserType {
