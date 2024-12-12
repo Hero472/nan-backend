@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Student } from '../student/entities/student.entity';
 import { LoginDto } from './dto/login.dto';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Parent } from '../parent/entities/parent.entity';
 import { Professor } from '../professor/entities/professor.entity';
@@ -79,7 +79,7 @@ export class AuthService {
       return null;
     }
 
-    const isPasswordValid = await bcrypt.compare(pass, student.password.toString());
+    const isPasswordValid = await bcryptjs.compare(pass, student.password.toString());
 
     if (isPasswordValid) {
       return student;
@@ -107,7 +107,7 @@ export class AuthService {
         throw new UnauthorizedException('Invalid email or password');
       }
 
-      const isPasswordValid = await bcrypt.compare(password, student.password.toString());
+      const isPasswordValid = await bcryptjs.compare(password, student.password.toString());
 
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid email or password');
@@ -183,7 +183,7 @@ export class AuthService {
       return null;
     }
 
-    const isPasswordValid = await bcrypt.compare(pass, parent.password.toString());
+    const isPasswordValid = await bcryptjs.compare(pass, parent.password.toString());
 
     if (isPasswordValid) {
       return parent;
@@ -211,7 +211,7 @@ export class AuthService {
         throw new UnauthorizedException('Invalid email or password');
       }
 
-      const isPasswordValid = await bcrypt.compare(password, parent.password.toString());
+      const isPasswordValid = await bcryptjs.compare(password, parent.password.toString());
 
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid email or password');
@@ -286,7 +286,7 @@ export class AuthService {
       return null;
     }
 
-    const isPasswordValid = await bcrypt.compare(pass, professor.password.toString());
+    const isPasswordValid = await bcryptjs.compare(pass, professor.password.toString());
 
     if (isPasswordValid) {
       return professor;
@@ -314,7 +314,7 @@ export class AuthService {
         throw new UnauthorizedException('Invalid email or password');
       }
 
-      const isPasswordValid = await bcrypt.compare(password, professor.password.toString());
+      const isPasswordValid = await bcryptjs.compare(password, professor.password.toString());
 
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid email or password');

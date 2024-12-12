@@ -193,7 +193,6 @@ export class GradeService {
     }
   }
 
-
   async remove(id: number): Promise<void> {
     try {
       const result = await this.gradeRepository.delete(id);
