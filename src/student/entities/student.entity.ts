@@ -13,7 +13,7 @@ export class Student {
   @Column({ type: 'text' })
   name!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   notification_id!: string;
 
   @IsNotEmpty()

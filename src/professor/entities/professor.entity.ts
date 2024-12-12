@@ -12,7 +12,7 @@ export class Professor {
   @Column({ type: 'text', unique: true })
   email!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   notification_id!: string;
 
   @Column({ type: 'bytea' })
